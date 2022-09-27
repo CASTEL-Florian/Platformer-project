@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 moveDirection;
     private BoxCollider2D boxCollider;
     private bool grounded = false;
+    private Vector2 lastPosition;
     private void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
@@ -37,8 +38,9 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        lastPosition = transform.position;
         GroundCheck();
-        velocity.y -= gravity * Time.fixedDeltaTime;
+        velocity.y -= grounded ? 0 : gravity * Time.fixedDeltaTime;
         if (airControl || grounded)
             velocity.x += moveDirection.x * Time.fixedDeltaTime * (grounded ? groundAcceleration : airAcceleration);
         velocity.x = Mathf.Clamp(velocity.x, -maxVelocityX, maxVelocityX);
@@ -52,31 +54,13 @@ public class PlayerController : MonoBehaviour
                 velocity.x -= velocity.x > 0 ? deceleration * Time.fixedDeltaTime : -deceleration * Time.fixedDeltaTime;
         }
         transform.position = transform.position + (Vector3)(velocity * Time.fixedDeltaTime);
-        Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0);
-
-        foreach (Collider2D hit in hits)
-        { 
-            if (hit == boxCollider)
-                continue;
-
-            ColliderDistance2D colliderDistance = hit.Distance(boxCollider);
-
-            if (colliderDistance.isOverlapped)
-            {
-                Vector2 translation = colliderDistance.pointA - colliderDistance.pointB;
-                transform.Translate(translation);
-                if (translation.x != 0)
-                    velocity.x = 0;
-                if (translation.y != 0)
-                    velocity.y = 0;
-            }
-        }
-
     }
 
     private void GroundCheck()
     {
         grounded = false;
+        if (velocity.y > 0)
+            return;
         Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, groundCheckRadius, m_WhatIsGround);
         for (int i = 0; i < colliders.Length; i++)
         {
@@ -90,10 +74,11 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (currentAirJumpCount < airJumpCount)
+        if (grounded || currentAirJumpCount < airJumpCount)
         {
             velocity.y = jumpVelocity;
-            currentAirJumpCount += 1;
+            if (!grounded)
+                currentAirJumpCount += 1;
         }
     }
 
@@ -103,5 +88,34 @@ public class PlayerController : MonoBehaviour
         if (jump)
             Jump();
         moveDirection = dir;
+    }
+
+    private void LateUpdate()
+    {
+        Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0);
+        foreach (Collider2D hit in hits)
+        { 
+            if (hit == boxCollider)
+                continue;
+
+            ColliderDistance2D colliderDistance = hit.Distance(boxCollider);
+            if (colliderDistance.isOverlapped)
+            {
+                if (hit.gameObject.layer == LayerMask.NameToLayer("Plateform"))
+                {
+                    if (lastPosition.y - transform.position.y + boxCollider.bounds.min.y < hit.bounds.max.y || velocity.y > 0)
+                        continue;
+                }
+
+                Vector2 translation = colliderDistance.pointA - colliderDistance.pointB;
+                transform.Translate(translation);
+                if (Mathf.Abs(translation.x) >= 0.01f)
+                {
+                    velocity.x = 0;
+                }
+                if (Mathf.Abs(translation.y) >= 0.01f)
+                    velocity.y = 0;
+            }
+        }
     }
 }

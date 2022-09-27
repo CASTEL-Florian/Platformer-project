@@ -113,21 +113,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: befd675d93c25794fb2c7636d0051bac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxVelocityX: 10
+  groundAcceleration: 10
+  groundDeceleration: 10
+  airAcceleration: 15
+  airDeceleration: 0
+  gravity: 20
+  airJumpCount: 1
+  maxVelocityY: 10
+  jumpVelocity: 10
+  airControl: 1
   groundCheck: {fileID: 5631973466216140760}
   groundCheckRadius: 0.05
   m_WhatIsGround:
     serializedVersion: 2
-    m_Bits: 1
-  groundAcceleration: 10
-  airAcceleration: 15
-  airDeceleration: 0
-  groundDeceleration: 10
-  jumpVelocity: 10
-  gravity: 20
-  maxVelocity: {x: 5, y: 10}
-  airJumpCount: 1
-  currentAirJumpCount: 0
-  airControl: 1
+    m_Bits: 65
 --- !u!50 &1959280997
 Rigidbody2D:
   serializedVersion: 4
