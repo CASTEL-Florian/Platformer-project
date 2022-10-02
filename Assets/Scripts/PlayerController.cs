@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpVelocity;
     [SerializeField] private bool airControl = true;
     [Header("Collisions verticales et horizontales")]
-    [SerializeField] private Transform groundCheck;
+    [SerializeField] private BoxCollider2D groundCheck;
     [SerializeField] private float groundCheckRadius;
     [SerializeField] private LayerMask m_WhatIsGround;
     [Header("Autre")]
@@ -61,7 +61,8 @@ public class PlayerController : MonoBehaviour
         grounded = false;
         if (velocity.y > 0)
             return;
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, groundCheckRadius, m_WhatIsGround);
+        //Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, groundCheckRadius, m_WhatIsGround);
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(groundCheck.transform.position, groundCheck.size, 0, m_WhatIsGround);
         for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].gameObject != gameObject)
@@ -97,7 +98,6 @@ public class PlayerController : MonoBehaviour
         { 
             if (hit == boxCollider)
                 continue;
-
             ColliderDistance2D colliderDistance = hit.Distance(boxCollider);
             if (colliderDistance.isOverlapped)
             {
@@ -106,8 +106,12 @@ public class PlayerController : MonoBehaviour
                     if (lastPosition.y - transform.position.y + boxCollider.bounds.min.y < hit.bounds.max.y || velocity.y > 0)
                         continue;
                 }
-
                 Vector2 translation = colliderDistance.pointA - colliderDistance.pointB;
+                if (hit.gameObject.layer == LayerMask.NameToLayer("Slope"))
+                {
+                    translation.y = Mathf.Abs(translation.x) < 0.001 ? translation.y : Mathf.Abs(translation.magnitude / Mathf.Sin(Mathf.Atan(translation.y / translation.x)));
+                    translation.x = 0;
+                }
                 transform.Translate(translation);
                 if (Mathf.Abs(translation.x) >= 0.01f)
                 {
