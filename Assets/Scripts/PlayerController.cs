@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float airAcceleration;
     [SerializeField] private float airDeceleration;
     [SerializeField] private float maxFallingSpeedOnWalls = 2f;
+    [SerializeField] private AnimationCurve velocityOnSlopeMultiplier;
     [Header("Saut")]
     [SerializeField] private float gravity = 20;
     [SerializeField] private int airJumpCount = 1;
@@ -20,6 +21,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector2 wallJumpVelocity;
     [SerializeField] private float jumpReleaseMultiplier = 2f;
     [SerializeField] private bool airControl = true;
+    [SerializeField] private float coyoteTimeThreshold = 0.1f;
     [Header("Collisions verticales et horizontales")]
     [SerializeField] private BoxCollider2D groundCheck;
     [SerializeField] private float groundCheckRadius;
@@ -41,16 +43,21 @@ public class PlayerController : MonoBehaviour
     private bool onWall = false;
     private Vector2 lastPosition;
     private bool jumpButtonReleased;
+    private float timeSinceLeftGround = 0;
+    private float slopeAngle = 0;
     private void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
         currentAirJumpCount = airJumpCount;
         rb = GetComponent<Rigidbody2D>();
     }
+
     private void FixedUpdate()
     {
         lastPosition = transform.position;
         GroundCheck();
+        if (!grounded)
+            timeSinceLeftGround += Time.fixedDeltaTime;
         if (jump)
         {
             jump = false;
@@ -70,9 +77,18 @@ public class PlayerController : MonoBehaviour
             velocity.y /= jumpReleaseMultiplier;
         }
         jumpButtonReleased = false;
+        float acceleration = grounded ? groundAcceleration : airAcceleration;
         if (airControl || grounded)
-            velocity.x += moveDirection.x * Time.fixedDeltaTime * (grounded ? groundAcceleration : airAcceleration);
+            velocity.x += moveDirection.x * Time.fixedDeltaTime * acceleration;
         velocity.x = Mathf.Clamp(velocity.x, -maxVelocityX, maxVelocityX);
+        if (grounded)
+        {
+            if (slopeAngle * moveDirection.x > 0)
+            {
+                float slopeMaxVelocity = velocityOnSlopeMultiplier.Evaluate(Mathf.Abs(slopeAngle / 90)) * maxVelocityX;
+                velocity.x = Mathf.Clamp(velocity.x, -slopeMaxVelocity, slopeMaxVelocity);
+            }
+        }
         wallCheckTransform.rotation = Quaternion.Euler(0,0,velocity.x < 0 ? 180 : 0);
 
         WallCheck();
@@ -95,7 +111,7 @@ public class PlayerController : MonoBehaviour
     private void GroundCheck()
     {
         grounded = false;
-
+        slopeAngle = 0;
         if (velocity.y > 0)
         {
             groundObjectId = GetInstanceID();
@@ -108,6 +124,12 @@ public class PlayerController : MonoBehaviour
             {
                 grounded = true;
                 currentAirJumpCount = 0;
+                if (colliders[i].tag == "Slope")
+                {
+                    slopeAngle = colliders[i].transform.rotation.eulerAngles.z;
+                    if (slopeAngle > 90)
+                        slopeAngle -= 360;
+                }
                 if (groundObjectId == colliders[i].GetInstanceID())
                 {
                     transform.Translate(colliders[i].transform.position - (Vector3)groundPosition);
@@ -116,8 +138,10 @@ public class PlayerController : MonoBehaviour
                 groundPosition = colliders[i].transform.position;
             }
         }
-        if(!grounded)
+        if (!grounded)
             groundObjectId = GetInstanceID();
+        else
+            timeSinceLeftGround = 0;
     }
 
     private void WallCheck()
@@ -137,9 +161,10 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (grounded || onWall)
+        if (grounded || onWall || timeSinceLeftGround < coyoteTimeThreshold)
         {
             jump = true;
+            timeSinceLeftGround = coyoteTimeThreshold;
         }    
         else if (currentAirJumpCount < airJumpCount)
         {

@@ -120,12 +120,38 @@ MonoBehaviour:
   airAcceleration: 15
   airDeceleration: 0
   maxFallingSpeedOnWalls: 2
+  velocityOnSlopeMultiplier:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.05688858
+      value: 0.98257446
+      inSlope: -0.92968595
+      outSlope: -0.92968595
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.92968595
+      outSlope: -0.92968595
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   gravity: 20
   airJumpCount: 1
   maxVelocityY: 10
   jumpVelocity: 10
   wallJumpVelocity: {x: 5, y: 10}
+  jumpReleaseMultiplier: 2
   airControl: 1
+  coyoteTimeThreshold: 0.1
   groundCheck: {fileID: 7289922071131833546}
   groundCheckRadius: 0.05
   m_WhatIsGround:
