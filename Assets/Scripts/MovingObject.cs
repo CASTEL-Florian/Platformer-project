@@ -14,9 +14,9 @@ public class MovingObject : MonoBehaviour
     {
         startPosition = transform.position;   
     }
-    void Update()
+    void FixedUpdate()
     {
-        time += Time.deltaTime;
+        time += Time.fixedDeltaTime;
         if (time > movementTime)
         {
             time = 0;

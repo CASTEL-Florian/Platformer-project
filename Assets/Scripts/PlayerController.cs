@@ -35,6 +35,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 moveDirection;
     private BoxCollider2D boxCollider;
     private bool grounded = false;
+    private int groundObjectId;
+    private Vector2 groundPosition;
     private bool onWall = false;
     private Vector2 lastPosition;
     private void Start()
@@ -86,8 +88,12 @@ public class PlayerController : MonoBehaviour
     private void GroundCheck()
     {
         grounded = false;
+
         if (velocity.y > 0)
+        {
+            groundObjectId = GetInstanceID();
             return;
+        }
         Collider2D[] colliders = Physics2D.OverlapBoxAll(groundCheck.transform.position, groundCheck.size, 0, m_WhatIsGround);
         for (int i = 0; i < colliders.Length; i++)
         {
@@ -95,8 +101,16 @@ public class PlayerController : MonoBehaviour
             {
                 grounded = true;
                 currentAirJumpCount = 0;
+                if (groundObjectId == colliders[i].GetInstanceID())
+                {
+                    transform.Translate(colliders[i].transform.position - (Vector3)groundPosition);
+                }
+                groundObjectId = colliders[i].GetInstanceID();
+                groundPosition = colliders[i].transform.position;
             }
         }
+        if(!grounded)
+            groundObjectId = GetInstanceID();
     }
 
     private void WallCheck()
@@ -147,7 +161,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.gameObject.layer == LayerMask.NameToLayer("Plateform"))
                 {
-                    if (lastPosition.y - transform.position.y + boxCollider.bounds.min.y < hit.bounds.max.y || velocity.y > 0 || moveDirection.y < 0)
+                    if (!grounded && lastPosition.y - transform.position.y + boxCollider.bounds.min.y < hit.bounds.max.y || velocity.y > 0 || moveDirection.y < 0)
                         continue;
                 }
                 Vector2 translation = colliderDistance.pointA - colliderDistance.pointB;
