@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerInputs : MonoBehaviour
 {
     private InputSettings inputs;
     private bool jump = false;
+    private bool dash = false;
     private Vector2 moveDirection;
     private PlayerController controller;
     private bool jumpButtonHeld = false;
@@ -19,6 +18,7 @@ public class PlayerInputs : MonoBehaviour
         inputs = new InputSettings();
         inputs.Enable();
         inputs.Player.Jump.performed += ctx => Jump();
+        inputs.Player.Dash.performed += ctx => Dash();
     }
 
     private void OnDisable()
@@ -31,11 +31,20 @@ public class PlayerInputs : MonoBehaviour
         jump = true;
     }
 
+    private void Dash()
+    {
+        dash = true;
+    }
 
     private void FixedUpdate()
     {
-        controller.Move(inputs.Player.Move.ReadValue<Vector2>(), jump);
+        bool sprint = inputs.Player.Sprint.ReadValue<float>() == 1f;
+        
+        controller.Move(inputs.Player.Move.ReadValue<Vector2>(), jump, sprint, dash);
+        
         jump = false;
+        dash = false;
+        
         bool jumpButton = inputs.Player.Jump.ReadValue<float>() != 0;
         if (jumpButtonHeld && !jumpButton)
             controller.JumpButtonReleased();

@@ -115,27 +115,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxVelocityX: 10
-  groundAcceleration: 10
-  groundDeceleration: 10
-  airAcceleration: 15
-  airDeceleration: 0
-  maxFallingSpeedOnWalls: 2
+  acceleration: 15
+  sprintMaxVelocityX: 10
+  sprintAcceleration: 20
+  allowTurnBoost: 1
+  turnBoostFactor: 4
+  turnBoostDuration: 1
+  allowDash: 1
+  dashSpeed: 1000
+  dashDuration: 0.3
+  dashCooldown: 0.75
   gravity: 20
   airJumpCount: 1
   maxVelocityY: 10
   jumpVelocity: 10
   wallJumpVelocity: {x: 5, y: 10}
+  jumpReleaseMultiplier: 2
   airControl: 1
+  airSprintControl: 1
   groundCheck: {fileID: 7289922071131833546}
   groundCheckRadius: 0.05
-  m_WhatIsGround:
+  whatIsGround:
     serializedVersion: 2
     m_Bits: 193
-  m_WhatIsWalls:
+  whatIsWall:
     serializedVersion: 2
     m_Bits: 1
   wallCheck: {fileID: 6066670764835541497}
   wallCheckTransform: {fileID: 5230424036135272816}
+  maxFallingSpeedOnWalls: 2
+  groundDeceleration: 10
+  airDeceleration: 8
 --- !u!50 &1959280997
 Rigidbody2D:
   serializedVersion: 4
