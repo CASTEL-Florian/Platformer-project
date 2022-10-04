@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float maxVelocityY;
     [SerializeField] private float jumpVelocity;
     [SerializeField] private Vector2 wallJumpVelocity;
+    [SerializeField] private float jumpReleaseMultiplier = 2f;
     [SerializeField] private bool airControl = true;
     [Header("Collisions verticales et horizontales")]
     [SerializeField] private BoxCollider2D groundCheck;
@@ -39,6 +40,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 groundPosition;
     private bool onWall = false;
     private Vector2 lastPosition;
+    private bool jumpButtonReleased;
     private void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
@@ -63,6 +65,11 @@ public class PlayerController : MonoBehaviour
                 velocity.y = jumpVelocity;
             }
         }
+        if (velocity.y > 0 && jumpButtonReleased)
+        {
+            velocity.y /= jumpReleaseMultiplier;
+        }
+        jumpButtonReleased = false;
         if (airControl || grounded)
             velocity.x += moveDirection.x * Time.fixedDeltaTime * (grounded ? groundAcceleration : airAcceleration);
         velocity.x = Mathf.Clamp(velocity.x, -maxVelocityX, maxVelocityX);
@@ -149,6 +156,11 @@ public class PlayerController : MonoBehaviour
         moveDirection = dir;
     }
 
+    public void JumpButtonReleased()
+    {
+        jumpButtonReleased = true;
+    }
+
     private void LateUpdate()
     {
         Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0);
@@ -167,7 +179,7 @@ public class PlayerController : MonoBehaviour
                 Vector2 translation = colliderDistance.pointA - colliderDistance.pointB;
                 if (hit.gameObject.layer == LayerMask.NameToLayer("Slope"))
                 {
-                    translation.y = Mathf.Abs(translation.x) < 0.001 ? translation.y : Mathf.Abs(translation.magnitude / Mathf.Sin(Mathf.Atan(translation.y / translation.x)));
+                    translation.y = Mathf.Abs(translation.x) < 0.01 ? translation.y : Mathf.Abs(translation.magnitude / Mathf.Sin(Mathf.Atan(translation.y / translation.x)));
                     translation.x = 0;
                 }
                 transform.Translate(translation);

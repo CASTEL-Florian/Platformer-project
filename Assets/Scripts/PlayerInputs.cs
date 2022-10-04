@@ -8,6 +8,7 @@ public class PlayerInputs : MonoBehaviour
     private bool jump = false;
     private Vector2 moveDirection;
     private PlayerController controller;
+    private bool jumpButtonHeld = false;
 
     private void Start()
     {
@@ -35,5 +36,9 @@ public class PlayerInputs : MonoBehaviour
     {
         controller.Move(inputs.Player.Move.ReadValue<Vector2>(), jump);
         jump = false;
+        bool jumpButton = inputs.Player.Jump.ReadValue<float>() != 0;
+        if (jumpButtonHeld && !jumpButton)
+            controller.JumpButtonReleased();
+        jumpButtonHeld = jumpButton;
     }
 }
