@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpVelocity;
     [SerializeField] private Vector2 wallJumpVelocity;
     [SerializeField] private float jumpReleaseMultiplier = 2f;
+    [SerializeField] private float bufferJumpMaxAllowedTime = .2f;
     [SerializeField] private bool airControl = true;
     [SerializeField] private bool airSprintControl = true;
     
@@ -41,6 +42,7 @@ public class PlayerController : MonoBehaviour
     [Space]
     [SerializeField] private float groundDeceleration;
     [SerializeField] private float airDeceleration;
+    [SerializeField] private float trampolineBounceVelocity;
 
     private Vector2 velocity = Vector2.zero;
     private Vector2 moveDirection;
@@ -55,6 +57,7 @@ public class PlayerController : MonoBehaviour
     private int currentAirJumpCount;
     private bool jump = false;
     private bool jumpButtonReleased;
+    private float bufferedJumpTime = 0f;
     
     private bool sprinting = false;
     
@@ -63,6 +66,8 @@ public class PlayerController : MonoBehaviour
     private float dashDirection = 0f;
     private float dashStopTime = 0f;
     private float dashCooldownStopTime = 0f;
+
+    private bool hasBounced = false;
     
     private void Start()
     {
@@ -71,28 +76,37 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        bool onTrampoline = false;
         lastPosition = transform.position;
-        GroundCheck();
-        
-        if (jump)
+        GroundCheck(ref onTrampoline);
+
+        if (onTrampoline)
         {
-            jump = false;
-            if (onWall)
-            {
-                velocity = wallJumpVelocity;
-                if (wallCheck.transform.rotation.eulerAngles.z < 90)
-                    velocity.x = -velocity.x;
-            }
-            else
-            {
-                velocity.y = jumpVelocity;
-            }
+            velocity.y = trampolineBounceVelocity;
+            hasBounced = true;
         }
-        
-        if (velocity.y > 0 && jumpButtonReleased)
-            velocity.y /= jumpReleaseMultiplier;
-        jumpButtonReleased = false;
-        
+        else
+        {
+            if (jump)
+            {
+                jump = false;
+                if (onWall)
+                {
+                    velocity = wallJumpVelocity;
+                    if (wallCheck.transform.rotation.eulerAngles.z < 90)
+                        velocity.x = -velocity.x;
+                }
+                else
+                {
+                    velocity.y = jumpVelocity;
+                }
+            }
+
+            if (velocity.y > 0 && jumpButtonReleased)
+                velocity.y /= jumpReleaseMultiplier;
+            jumpButtonReleased = false;
+        }
+
         float speed = sprinting ? sprintAcceleration : acceleration;
         float maxSpeedX = sprinting ? sprintMaxVelocityX : maxVelocityX;
         float deceleration = grounded ? groundDeceleration : airDeceleration;
@@ -107,10 +121,13 @@ public class PlayerController : MonoBehaviour
 
         WallCheck();
         velocity.y -= gravity * Time.fixedDeltaTime;
-        velocity.y = Mathf.Clamp(velocity.y, -maxVelocityY, maxVelocityY);
         
         if(onWall)
             velocity.y = Mathf.Clamp(velocity.y, -maxFallingSpeedOnWalls, maxVelocityY);
+        else if(hasBounced)
+            velocity.y = Mathf.Clamp(velocity.y, -maxVelocityY, velocity.y);
+        else
+            velocity.y = Mathf.Clamp(velocity.y, -maxVelocityY, maxVelocityY);
 
         if (moveDirection.x == 0)
         {
@@ -122,7 +139,7 @@ public class PlayerController : MonoBehaviour
 
         if (IsDashing())
         {
-            velocity.x = dashDirection * dashSpeed * Time.fixedDeltaTime;
+            velocity.x = dashDirection * dashSpeed;
             velocity.y = 0;
         }
         else
@@ -131,7 +148,7 @@ public class PlayerController : MonoBehaviour
         transform.position += (Vector3)(velocity * Time.fixedDeltaTime);
     }
 
-    private void GroundCheck()
+    private void GroundCheck(ref bool onTrampoline)
     {
         grounded = false;
 
@@ -140,13 +157,21 @@ public class PlayerController : MonoBehaviour
             groundObjectId = GetInstanceID();
             return;
         }
+        
         Collider2D[] colliders = Physics2D.OverlapBoxAll(groundCheck.transform.position, groundCheck.size, 0, whatIsGround);
         for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].gameObject != gameObject)
             {
+                onTrampoline = colliders[i].CompareTag("Trampoline");
+
+                if (Time.time < bufferedJumpTime)
+                    jump = true;
+
                 grounded = true;
+                hasBounced = false;
                 currentAirJumpCount = 0;
+                
                 if (groundObjectId == colliders[i].GetInstanceID())
                 {
                     transform.Translate(colliders[i].transform.position - (Vector3)groundPosition);
@@ -155,6 +180,7 @@ public class PlayerController : MonoBehaviour
                 groundPosition = colliders[i].transform.position;
             }
         }
+        
         if(!grounded)
             groundObjectId = GetInstanceID();
     }
@@ -170,13 +196,17 @@ public class PlayerController : MonoBehaviour
             if (colliders[i].gameObject != gameObject)
             {
                 onWall = true;
+                if (Time.time < bufferedJumpTime)
+                    jump = true;
             }
         }
     }
 
     private void Jump()
     {
-        if (grounded || onWall)
+        if (!grounded)
+            bufferedJumpTime = Time.time + bufferJumpMaxAllowedTime;
+        else if (onWall)
         {
             jump = true;
         }    

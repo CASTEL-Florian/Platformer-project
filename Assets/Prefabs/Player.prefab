@@ -131,6 +131,7 @@ MonoBehaviour:
   jumpVelocity: 10
   wallJumpVelocity: {x: 5, y: 10}
   jumpReleaseMultiplier: 2
+  bufferJumpMaxAllowedTime: 0.2
   airControl: 1
   airSprintControl: 1
   groundCheck: {fileID: 7289922071131833546}
@@ -146,6 +147,7 @@ MonoBehaviour:
   maxFallingSpeedOnWalls: 2
   groundDeceleration: 10
   airDeceleration: 8
+  trampolineBounceVelocity: 10
 --- !u!50 &1959280997
 Rigidbody2D:
   serializedVersion: 4
