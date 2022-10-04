@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [Header("Autre")]
 
     private int currentAirJumpCount;
+    private bool jump = false;
 
     private Vector2 velocity = Vector2.zero;
     private Vector2 moveDirection;
@@ -40,7 +41,12 @@ public class PlayerController : MonoBehaviour
     {
         lastPosition = transform.position;
         GroundCheck();
-        velocity.y -= grounded ? 0 : gravity * Time.fixedDeltaTime;
+        if (jump)
+        {
+            jump = false;
+            velocity.y = jumpVelocity;
+        }
+        velocity.y -= gravity * Time.fixedDeltaTime;
         if (airControl || grounded)
             velocity.x += moveDirection.x * Time.fixedDeltaTime * (grounded ? groundAcceleration : airAcceleration);
         velocity.x = Mathf.Clamp(velocity.x, -maxVelocityX, maxVelocityX);
@@ -61,7 +67,6 @@ public class PlayerController : MonoBehaviour
         grounded = false;
         if (velocity.y > 0)
             return;
-        //Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, groundCheckRadius, m_WhatIsGround);
         Collider2D[] colliders = Physics2D.OverlapBoxAll(groundCheck.transform.position, groundCheck.size, 0, m_WhatIsGround);
         for (int i = 0; i < colliders.Length; i++)
         {
@@ -75,11 +80,14 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (grounded || currentAirJumpCount < airJumpCount)
+        if (grounded)
         {
-            velocity.y = jumpVelocity;
-            if (!grounded)
-                currentAirJumpCount += 1;
+            jump = true;
+        }    
+        else if (currentAirJumpCount < airJumpCount)
+        {
+            jump = true;
+            currentAirJumpCount += 1;
         }
     }
 
@@ -103,7 +111,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.gameObject.layer == LayerMask.NameToLayer("Plateform"))
                 {
-                    if (lastPosition.y - transform.position.y + boxCollider.bounds.min.y < hit.bounds.max.y || velocity.y > 0)
+                    if (lastPosition.y - transform.position.y + boxCollider.bounds.min.y < hit.bounds.max.y || velocity.y > 0 || moveDirection.y < 0)
                         continue;
                 }
                 Vector2 translation = colliderDistance.pointA - colliderDistance.pointB;
