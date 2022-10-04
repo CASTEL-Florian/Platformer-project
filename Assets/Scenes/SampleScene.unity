@@ -493,25 +493,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1959280997, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
-      propertyPath: m_BodyType
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1959280997, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
-      propertyPath: m_Simulated
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1959280997, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
-      propertyPath: m_Constraints
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1959280997, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
-      propertyPath: m_CollisionDetection
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 809719391630211708, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 1546617591896074574, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
+      propertyPath: maxVelocityX
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6425229008933663099, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
       propertyPath: m_RootOrder

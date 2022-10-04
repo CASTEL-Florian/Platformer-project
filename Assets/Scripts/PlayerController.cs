@@ -1,19 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody2D rb;
     [Header("Déplacement horizontal")]
+    [Space]
     [SerializeField] private float maxVelocityX;
-    [SerializeField] private float groundAcceleration;
-    [SerializeField] private float groundDeceleration;
-    [SerializeField] private float airAcceleration;
-    [SerializeField] private float airDeceleration;
-    [SerializeField] private float maxFallingSpeedOnWalls = 2f;
-    [SerializeField] private AnimationCurve velocityOnSlopeMultiplier;
+    [SerializeField] private float acceleration;
+    [SerializeField] private float sprintMaxVelocityX;
+    [SerializeField] private float sprintAcceleration;
+    [SerializeField] private bool allowTurnBoost = true;
+    [SerializeField] private float turnBoostFactor;
+    [SerializeField] private float turnBoostDuration;
+    [SerializeField] private bool allowDash = true;
+    [SerializeField] private float dashSpeed;
+    [SerializeField] private float dashDuration;
+    [SerializeField] private float dashCooldown;
+    
     [Header("Saut")]
+    [Space]
     [SerializeField] private float gravity = 20;
     [SerializeField] private int airJumpCount = 1;
     [SerializeField] private float maxVelocityY;
@@ -21,35 +25,52 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector2 wallJumpVelocity;
     [SerializeField] private float jumpReleaseMultiplier = 2f;
     [SerializeField] private bool airControl = true;
+    [SerializeField] private bool airSprintControl = true;
+    
     [SerializeField] private float coyoteTimeThreshold = 0.1f;
     [Header("Collisions verticales et horizontales")]
+    [Space]
     [SerializeField] private BoxCollider2D groundCheck;
     [SerializeField] private float groundCheckRadius;
-    [SerializeField] private LayerMask m_WhatIsGround;
-    [SerializeField] private LayerMask m_WhatIsWalls;
+    [SerializeField] private LayerMask whatIsGround;
+    [SerializeField] private LayerMask whatIsWall;
     [SerializeField] private BoxCollider2D wallCheck;
     [SerializeField] private Transform wallCheckTransform;
+    [SerializeField] private float maxFallingSpeedOnWalls = 2f;
+    
     [Header("Autre")]
-
-    private int currentAirJumpCount;
-    private bool jump = false;
+    [Space]
+    [SerializeField] private float groundDeceleration;
+    [SerializeField] private float airDeceleration;
 
     private Vector2 velocity = Vector2.zero;
     private Vector2 moveDirection;
+    
     private BoxCollider2D boxCollider;
-    private bool grounded = false;
-    private int groundObjectId;
     private Vector2 groundPosition;
-    private bool onWall = false;
     private Vector2 lastPosition;
+    private int groundObjectId;
+    private bool grounded = false;
+    private bool onWall = false;
+    
+    private int currentAirJumpCount;
+    private bool jump = false;
     private bool jumpButtonReleased;
+    
+    private bool sprinting = false;
+    
+    private float turnBoostStopTime = 0f;
+    
+    private float dashDirection = 0f;
+    private float dashStopTime = 0f;
+    private float dashCooldownStopTime = 0f;
+    
     private float timeSinceLeftGround = 0;
     private float slopeAngle = 0;
     private void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
         currentAirJumpCount = airJumpCount;
-        rb = GetComponent<Rigidbody2D>();
     }
 
     private void FixedUpdate()
@@ -72,32 +93,30 @@ public class PlayerController : MonoBehaviour
                 velocity.y = jumpVelocity;
             }
         }
+        
         if (velocity.y > 0 && jumpButtonReleased)
-        {
             velocity.y /= jumpReleaseMultiplier;
-        }
         jumpButtonReleased = false;
-        float acceleration = grounded ? groundAcceleration : airAcceleration;
+        
+        float speed = sprinting ? sprintAcceleration : acceleration;
+        float maxSpeedX = sprinting ? sprintMaxVelocityX : maxVelocityX;
+        float deceleration = grounded ? groundDeceleration : airDeceleration;
+
         if (airControl || grounded)
-            velocity.x += moveDirection.x * Time.fixedDeltaTime * acceleration;
-        velocity.x = Mathf.Clamp(velocity.x, -maxVelocityX, maxVelocityX);
-        if (grounded)
-        {
-            if (slopeAngle * moveDirection.x > 0)
-            {
-                float slopeMaxVelocity = velocityOnSlopeMultiplier.Evaluate(Mathf.Abs(slopeAngle / 90)) * maxVelocityX;
-                velocity.x = Mathf.Clamp(velocity.x, -slopeMaxVelocity, slopeMaxVelocity);
-            }
-        }
+            velocity.x += moveDirection.x * speed * Time.fixedDeltaTime;
+
+        if (IsTurnBoostActive())
+            velocity.x += moveDirection.x * Mathf.Abs(velocity.x) * turnBoostFactor * Time.fixedDeltaTime;
+        
         wallCheckTransform.rotation = Quaternion.Euler(0,0,velocity.x < 0 ? 180 : 0);
 
         WallCheck();
         velocity.y -= gravity * Time.fixedDeltaTime;
         velocity.y = Mathf.Clamp(velocity.y, -maxVelocityY, maxVelocityY);
+        
         if(onWall)
             velocity.y = Mathf.Clamp(velocity.y, -maxFallingSpeedOnWalls, maxVelocityY);
 
-        float deceleration = grounded ? groundDeceleration : airDeceleration;
         if (moveDirection.x == 0)
         {
             if (Mathf.Abs(velocity.x) < deceleration * Time.fixedDeltaTime)
@@ -105,7 +124,16 @@ public class PlayerController : MonoBehaviour
             else
                 velocity.x -= velocity.x > 0 ? deceleration * Time.fixedDeltaTime : -deceleration * Time.fixedDeltaTime;
         }
-        transform.position = transform.position + (Vector3)(velocity * Time.fixedDeltaTime);
+
+        if (IsDashing())
+        {
+            velocity.x = dashDirection * dashSpeed * Time.fixedDeltaTime;
+            velocity.y = 0;
+        }
+        else
+            velocity.x = Mathf.Clamp(velocity.x, -maxSpeedX, maxSpeedX);
+        
+        transform.position += (Vector3)(velocity * Time.fixedDeltaTime);
     }
 
     private void GroundCheck()
@@ -117,7 +145,7 @@ public class PlayerController : MonoBehaviour
             groundObjectId = GetInstanceID();
             return;
         }
-        Collider2D[] colliders = Physics2D.OverlapBoxAll(groundCheck.transform.position, groundCheck.size, 0, m_WhatIsGround);
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(groundCheck.transform.position, groundCheck.size, 0, whatIsGround);
         for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].gameObject != gameObject)
@@ -149,7 +177,7 @@ public class PlayerController : MonoBehaviour
         onWall = false;
         if (velocity.x * moveDirection.x <= 0)
             return;
-        Collider2D[] colliders = Physics2D.OverlapBoxAll(wallCheck.transform.position, wallCheck.size, 0, m_WhatIsWalls);
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(wallCheck.transform.position, wallCheck.size, 0, whatIsWall);
         for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].gameObject != gameObject)
@@ -171,14 +199,6 @@ public class PlayerController : MonoBehaviour
             jump = true;
             currentAirJumpCount += 1;
         }
-    }
-
-    public void Move(Vector2 dir, bool jump)
-    {
-
-        if (jump)
-            Jump();
-        moveDirection = dir;
     }
 
     public void JumpButtonReleased()
@@ -216,5 +236,39 @@ public class PlayerController : MonoBehaviour
                     velocity.y = 0;
             }
         }
+    }
+
+    public void Move(Vector2 dir, bool jump, bool sprint, bool dash) // CHANGE
+    {
+        if (jump)
+            Jump();
+
+        if (allowTurnBoost && ((velocity.x < 0 && dir.x > 0) || (velocity.x > 0 && dir.x < 0)))
+            turnBoostStopTime = Time.time + turnBoostDuration;
+
+        moveDirection = dir;
+        sprinting = sprint && (sprinting || airSprintControl || (!airSprintControl && grounded));
+
+        if (allowDash && CanDash() && dash && dir.x != 0)
+        {
+            dashDirection = dir.x > 0 ? 1 : -1;
+            dashStopTime = Time.time + dashDuration;
+            dashCooldownStopTime = Time.time + dashCooldown;
+        }
+    }
+    
+    private bool IsTurnBoostActive() // CHANGE
+    {
+        return Time.time < turnBoostStopTime;
+    }
+    
+    private bool IsDashing() // CHANGE
+    {
+        return Time.time < dashStopTime;
+    }
+    
+    private bool CanDash() // CHANGE
+    {
+        return Time.time >= dashCooldownStopTime;
     }
 }
