@@ -146,6 +146,7 @@ MonoBehaviour:
   wallCheckTransform: {fileID: 5230424036135272816}
   maxFallingSpeedOnWalls: 2
   groundDeceleration: 10
+  iceDeceleration: 40
   airDeceleration: 8
   trampolineBounceVelocity: 10
 --- !u!50 &1959280997
