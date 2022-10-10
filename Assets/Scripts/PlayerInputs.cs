@@ -5,9 +5,7 @@ public class PlayerInputs : MonoBehaviour
     private InputSettings inputs;
     private bool jump = false;
     private bool dash = false;
-    private Vector2 moveDirection;
     private PlayerController controller;
-    private bool jumpButtonHeld = false;
 
     private void Start()
     {
@@ -46,8 +44,6 @@ public class PlayerInputs : MonoBehaviour
         dash = false;
         
         bool jumpButton = inputs.Player.Jump.ReadValue<float>() != 0;
-        if (jumpButtonHeld && !jumpButton)
-            controller.JumpButtonReleased();
-        jumpButtonHeld = jumpButton;
+        controller.SetJumpButtonValue(jumpButton);
     }
 }

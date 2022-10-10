@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float bufferJumpMaxAllowedTime = .2f;
     [SerializeField] private bool airControl = true;
     [SerializeField] private bool airSprintControl = true;
-    
+    [SerializeField] private bool fixedAirJumpHeight = true;
     [SerializeField] private float coyoteTimeThreshold = 0.1f;
     [Header("Collisions verticales et horizontales")]
     [Space]
@@ -62,7 +62,8 @@ public class PlayerController : MonoBehaviour
     
     private int currentAirJumpCount;
     private bool jump = false;
-    private bool jumpButtonReleased;
+    private bool jumpButtonHeld;
+    private bool jumpCancellable = false;
     private float bufferedJumpTime = 0f;
     
     private bool sprinting = false;
@@ -93,7 +94,10 @@ public class PlayerController : MonoBehaviour
         bool onTrampoline = false;
         bool onIce = false;
         GroundCheck(ref onTrampoline, ref onIce);
-
+        if (!grounded)
+            timeSinceLeftGround += Time.fixedDeltaTime;
+        if (velocity.y <= 0)
+            jumpCancellable = false;
         if (onTrampoline)
         {
             velocity.y = trampolineBounceVelocity;
@@ -103,6 +107,8 @@ public class PlayerController : MonoBehaviour
         {
             if (jump)
             {
+                if (grounded || !fixedAirJumpHeight)
+                    jumpCancellable = true;
                 jump = false;
                 if (onWall)
                 {
@@ -116,9 +122,11 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            if (velocity.y > 0 && jumpButtonReleased)
+            if (velocity.y > 0 && !jumpButtonHeld && jumpCancellable)
+            {
                 velocity.y /= jumpReleaseMultiplier;
-            jumpButtonReleased = false;
+                jumpCancellable = false;
+            }
         }
 
         float accelerationScale;
@@ -243,23 +251,25 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (!grounded)
-            bufferedJumpTime = Time.time + bufferJumpMaxAllowedTime;
-        else if (onWall)
+        if (grounded || onWall || (timeSinceLeftGround < coyoteTimeThreshold && velocity.y <= 0))
         {
             jump = true;
             timeSinceLeftGround = coyoteTimeThreshold;
-        }    
-        else if (currentAirJumpCount < airJumpCount)
-        {
-            jump = true;
-            currentAirJumpCount += 1;
+        }
+        else {
+            if (currentAirJumpCount < airJumpCount)
+            {
+                jump = true;
+                currentAirJumpCount += 1;
+            }
+            else
+                bufferedJumpTime = Time.time + bufferJumpMaxAllowedTime;
         }
     }
 
-    public void JumpButtonReleased()
+    public void SetJumpButtonValue(bool value)
     {
-        jumpButtonReleased = true;
+        jumpButtonHeld = value;
     }
 
     private void LateUpdate()
