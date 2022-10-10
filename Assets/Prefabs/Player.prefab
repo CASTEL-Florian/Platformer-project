@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 1546617591896074574}
   - component: {fileID: 1959280997}
   - component: {fileID: 1959280996}
+  - component: {fileID: 1769320467722942913}
+  - component: {fileID: 4572594292605645143}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -115,35 +117,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxVelocityX: 10
-  groundAcceleration: 10
-  groundDeceleration: 10
-  airAcceleration: 15
-  airDeceleration: 0
-  maxFallingSpeedOnWalls: 2
-  velocityOnSlopeMultiplier:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: -0.05688858
-      value: 0.98257446
-      inSlope: -0.92968595
-      outSlope: -0.92968595
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: -0.92968595
-      outSlope: -0.92968595
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  acceleration: 10
+  sprintMaxVelocityX: 15
+  sprintAcceleration: 15
+  allowTurnBoost: 1
+  turnBoostFactor: 4
+  turnBoostDuration: 1
+  allowDash: 1
+  dashSpeed: 20
+  dashDuration: 0.5
+  dashCooldown: 1
   gravity: 20
   airJumpCount: 1
   maxVelocityY: 10
@@ -151,17 +134,21 @@ MonoBehaviour:
   wallJumpVelocity: {x: 5, y: 10}
   jumpReleaseMultiplier: 2
   airControl: 1
+  airSprintControl: 1
   coyoteTimeThreshold: 0.1
   groundCheck: {fileID: 7289922071131833546}
   groundCheckRadius: 0.05
-  m_WhatIsGround:
+  whatIsGround:
     serializedVersion: 2
     m_Bits: 193
-  m_WhatIsWalls:
+  whatIsWall:
     serializedVersion: 2
     m_Bits: 1
   wallCheck: {fileID: 6066670764835541497}
   wallCheckTransform: {fileID: 5230424036135272816}
+  maxFallingSpeedOnWalls: 2
+  groundDeceleration: 15
+  airDeceleration: 0
 --- !u!50 &1959280997
 Rigidbody2D:
   serializedVersion: 4
@@ -209,6 +196,42 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1769320467722942913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 809719391630211708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a565b5b3a0f9bd44a92d955e9e42ee29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashMaterial: {fileID: 2100000, guid: d2709327aab537b46baa7a87b2f729d8, type: 2}
+  duration: 1
+  flashCount: 1
+--- !u!114 &4572594292605645143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 809719391630211708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78c5422b9ac83034ca94bc867bd22e87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  deathEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  maxHealth: 0
+  screenShake: 1
+  deathParticles: {fileID: 620789376876034167, guid: 321b1f404b5eb5245bf7d0b498c23f75, type: 3}
 --- !u!1 &2689885126852400251
 GameObject:
   m_ObjectHideFlags: 0
@@ -221,7 +244,7 @@ GameObject:
   - component: {fileID: 7289922071131833546}
   m_Layer: 3
   m_Name: GroundCheck
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -311,7 +334,7 @@ GameObject:
   - component: {fileID: 6066670764835541497}
   m_Layer: 3
   m_Name: Collider
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

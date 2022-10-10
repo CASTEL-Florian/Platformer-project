@@ -127,7 +127,7 @@ public class PlayerController : MonoBehaviour
 
         if (IsDashing())
         {
-            velocity.x = dashDirection * dashSpeed * Time.fixedDeltaTime;
+            velocity.x = dashDirection * dashSpeed;
             velocity.y = 0;
         }
         else
@@ -208,7 +208,7 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
-        Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0);
+        Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0, whatIsGround);
         foreach (Collider2D hit in hits)
         { 
             if (hit == boxCollider)
