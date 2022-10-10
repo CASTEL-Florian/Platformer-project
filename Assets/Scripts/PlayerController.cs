@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     [Space]
     [SerializeField] private float maxVelocityX;
     [SerializeField] private float acceleration;
+    [SerializeField] private float deceleration;
     [SerializeField] private float sprintMaxVelocityX;
     [SerializeField] private float sprintAcceleration;
     [SerializeField] private bool allowTurnBoost = true;
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpVelocity;
     [SerializeField] private Vector2 wallJumpVelocity;
     [SerializeField] private float jumpReleaseMultiplier = 2f;
+    [SerializeField] private float bufferJumpMaxAllowedTime = .2f;
     [SerializeField] private bool airControl = true;
     [SerializeField] private bool airSprintControl = true;
     
@@ -40,8 +42,13 @@ public class PlayerController : MonoBehaviour
     
     [Header("Autre")]
     [Space]
-    [SerializeField] private float groundDeceleration;
-    [SerializeField] private float airDeceleration;
+    [SerializeField] private float groundAccelerationScale;
+    [SerializeField] private float groundDecelerationScale;
+    [SerializeField] private float iceAccelerationScale;
+    [SerializeField] private float iceDecelerationScale;
+    [SerializeField] private float airAccelerationScale;
+    [SerializeField] private float airDecelerationScale;
+    [SerializeField] private float trampolineBounceVelocity;
 
     private Vector2 velocity = Vector2.zero;
     private Vector2 moveDirection;
@@ -56,6 +63,7 @@ public class PlayerController : MonoBehaviour
     private int currentAirJumpCount;
     private bool jump = false;
     private bool jumpButtonReleased;
+    private float bufferedJumpTime = 0f;
     
     private bool sprinting = false;
     
@@ -64,46 +72,82 @@ public class PlayerController : MonoBehaviour
     private float dashDirection = 0f;
     private float dashStopTime = 0f;
     private float dashCooldownStopTime = 0f;
+
+    private bool hasBounced = false;
+    private SpriteRenderer sp;
+    
     
     private float timeSinceLeftGround = 0;
     private float slopeAngle = 0;
     private void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
+        sp = GetComponent<SpriteRenderer>();
         currentAirJumpCount = airJumpCount;
     }
 
     private void FixedUpdate()
     {
         lastPosition = transform.position;
-        GroundCheck();
-        if (!grounded)
-            timeSinceLeftGround += Time.fixedDeltaTime;
-        if (jump)
+        
+        bool onTrampoline = false;
+        bool onIce = false;
+        GroundCheck(ref onTrampoline, ref onIce);
+
+        if (onTrampoline)
         {
-            jump = false;
-            if (onWall)
+            velocity.y = trampolineBounceVelocity;
+            hasBounced = true;
+        }
+        else
+        {
+            if (jump)
             {
-                velocity = wallJumpVelocity;
-                if (wallCheck.transform.rotation.eulerAngles.z < 90)
-                    velocity.x = -velocity.x;
+                jump = false;
+                if (onWall)
+                {
+                    velocity = wallJumpVelocity;
+                    if (wallCheck.transform.rotation.eulerAngles.z < 90)
+                        velocity.x = -velocity.x;
+                }
+                else
+                {
+                    velocity.y = jumpVelocity;
+                }
+            }
+
+            if (velocity.y > 0 && jumpButtonReleased)
+                velocity.y /= jumpReleaseMultiplier;
+            jumpButtonReleased = false;
+        }
+
+        float accelerationScale;
+        float decelerationScale;
+        if (grounded)
+        {
+            if (onIce)
+            {
+                accelerationScale = iceAccelerationScale;
+                decelerationScale = iceDecelerationScale;
             }
             else
             {
-                velocity.y = jumpVelocity;
+                accelerationScale = groundAccelerationScale;
+                decelerationScale = groundDecelerationScale;
             }
         }
-        
-        if (velocity.y > 0 && jumpButtonReleased)
-            velocity.y /= jumpReleaseMultiplier;
-        jumpButtonReleased = false;
-        
-        float speed = sprinting ? sprintAcceleration : acceleration;
+        else
+        {
+            accelerationScale = airAccelerationScale;
+            decelerationScale = airDecelerationScale;
+        }
+
+        float accelerationSpeed = (sprinting ? sprintAcceleration : acceleration) * accelerationScale;
+        float decelerationSpeed = deceleration * decelerationScale;
         float maxSpeedX = sprinting ? sprintMaxVelocityX : maxVelocityX;
-        float deceleration = grounded ? groundDeceleration : airDeceleration;
 
         if (airControl || grounded)
-            velocity.x += moveDirection.x * speed * Time.fixedDeltaTime;
+            velocity.x += moveDirection.x * accelerationSpeed * Time.fixedDeltaTime;
 
         if (IsTurnBoostActive())
             velocity.x += moveDirection.x * Mathf.Abs(velocity.x) * turnBoostFactor * Time.fixedDeltaTime;
@@ -112,17 +156,20 @@ public class PlayerController : MonoBehaviour
 
         WallCheck();
         velocity.y -= gravity * Time.fixedDeltaTime;
-        velocity.y = Mathf.Clamp(velocity.y, -maxVelocityY, maxVelocityY);
         
         if(onWall)
             velocity.y = Mathf.Clamp(velocity.y, -maxFallingSpeedOnWalls, maxVelocityY);
+        else if(hasBounced)
+            velocity.y = Mathf.Clamp(velocity.y, -maxVelocityY, velocity.y);
+        else
+            velocity.y = Mathf.Clamp(velocity.y, -maxVelocityY, maxVelocityY);
 
         if (moveDirection.x == 0)
         {
-            if (Mathf.Abs(velocity.x) < deceleration * Time.fixedDeltaTime)
+            if (Mathf.Abs(velocity.x) < decelerationSpeed * Time.fixedDeltaTime)
                 velocity.x = 0;
             else
-                velocity.x -= velocity.x > 0 ? deceleration * Time.fixedDeltaTime : -deceleration * Time.fixedDeltaTime;
+                velocity.x -= velocity.x > 0 ? decelerationSpeed * Time.fixedDeltaTime : -deceleration * Time.fixedDeltaTime;
         }
 
         if (IsDashing())
@@ -136,7 +183,7 @@ public class PlayerController : MonoBehaviour
         transform.position += (Vector3)(velocity * Time.fixedDeltaTime);
     }
 
-    private void GroundCheck()
+    private void GroundCheck(ref bool onTrampoline, ref bool onIce)
     {
         grounded = false;
         slopeAngle = 0;
@@ -145,12 +192,20 @@ public class PlayerController : MonoBehaviour
             groundObjectId = GetInstanceID();
             return;
         }
+        
         Collider2D[] colliders = Physics2D.OverlapBoxAll(groundCheck.transform.position, groundCheck.size, 0, whatIsGround);
         for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].gameObject != gameObject)
             {
+                onTrampoline = colliders[i].CompareTag("Trampoline") || onTrampoline;
+                onIce = colliders[i].CompareTag("Ice");
+
+                if (Time.time < bufferedJumpTime)
+                    jump = true;
+
                 grounded = true;
+                hasBounced = false;
                 currentAirJumpCount = 0;
                 if (colliders[i].tag == "Slope")
                 {
@@ -159,9 +214,7 @@ public class PlayerController : MonoBehaviour
                         slopeAngle -= 360;
                 }
                 if (groundObjectId == colliders[i].GetInstanceID())
-                {
                     transform.Translate(colliders[i].transform.position - (Vector3)groundPosition);
-                }
                 groundObjectId = colliders[i].GetInstanceID();
                 groundPosition = colliders[i].transform.position;
             }
@@ -183,13 +236,17 @@ public class PlayerController : MonoBehaviour
             if (colliders[i].gameObject != gameObject)
             {
                 onWall = true;
+                if (Time.time < bufferedJumpTime)
+                    jump = true;
             }
         }
     }
 
     private void Jump()
     {
-        if (grounded || onWall || timeSinceLeftGround < coyoteTimeThreshold)
+        if (!grounded)
+            bufferedJumpTime = Time.time + bufferJumpMaxAllowedTime;
+        else if (onWall)
         {
             jump = true;
             timeSinceLeftGround = coyoteTimeThreshold;
