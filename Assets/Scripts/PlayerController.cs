@@ -42,12 +42,12 @@ public class PlayerController : MonoBehaviour
     
     [Header("Autre")]
     [Space]
-    [SerializeField] private float groundAccelerationScale;
-    [SerializeField] private float groundDecelerationScale;
-    [SerializeField] private float iceAccelerationScale;
-    [SerializeField] private float iceDecelerationScale;
-    [SerializeField] private float airAccelerationScale;
-    [SerializeField] private float airDecelerationScale;
+    [SerializeField] private float groundAccelerationScale = 1;
+    [SerializeField] private float groundDecelerationScale = 1;
+    [SerializeField] private float iceAccelerationScale = 0.5f;
+    [SerializeField] private float iceDecelerationScale = 0.5f;
+    [SerializeField] private float airAccelerationScale = 0.5f;
+    [SerializeField] private float airDecelerationScale = 0.5f;
     [SerializeField] private float trampolineBounceVelocity;
 
     private Vector2 velocity = Vector2.zero;
@@ -145,7 +145,6 @@ public class PlayerController : MonoBehaviour
         float accelerationSpeed = (sprinting ? sprintAcceleration : acceleration) * accelerationScale;
         float decelerationSpeed = deceleration * decelerationScale;
         float maxSpeedX = sprinting ? sprintMaxVelocityX : maxVelocityX;
-
         if (airControl || grounded)
             velocity.x += moveDirection.x * accelerationSpeed * Time.fixedDeltaTime;
 

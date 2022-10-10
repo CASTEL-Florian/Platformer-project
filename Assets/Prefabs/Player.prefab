@@ -46,9 +46,9 @@ GameObject:
   - component: {fileID: 4596005832332189960}
   - component: {fileID: 7808410392803471890}
   - component: {fileID: -5069206277376527519}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -172,23 +172,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: befd675d93c25794fb2c7636d0051bac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxVelocityX: 0
-  acceleration: 0
-  deceleration: 0
-  sprintMaxVelocityX: 0
-  sprintAcceleration: 0
+  maxVelocityX: 5
+  acceleration: 10
+  deceleration: 15
+  sprintMaxVelocityX: 8
+  sprintAcceleration: 15
   allowTurnBoost: 1
   turnBoostFactor: 0
   turnBoostDuration: 0
   allowDash: 1
-  dashSpeed: 0
-  dashDuration: 0
-  dashCooldown: 0
+  dashSpeed: 10
+  dashDuration: 0.3
+  dashCooldown: 1
   gravity: 20
   airJumpCount: 1
-  maxVelocityY: 0
-  jumpVelocity: 0
-  wallJumpVelocity: {x: 0, y: 0}
+  maxVelocityY: 10
+  jumpVelocity: 15
+  wallJumpVelocity: {x: 5, y: 10}
   jumpReleaseMultiplier: 2
   bufferJumpMaxAllowedTime: 0.2
   airControl: 1
@@ -203,15 +203,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   wallCheck: {fileID: 1223250512267760923}
-  wallCheckTransform: {fileID: 4261003791155689879}
+  wallCheckTransform: {fileID: 4249916681023435189}
   maxFallingSpeedOnWalls: 2
-  groundAccelerationScale: 0
-  groundDecelerationScale: 0
-  iceAccelerationScale: 0
-  iceDecelerationScale: 0
-  airAccelerationScale: 0
-  airDecelerationScale: 0
-  trampolineBounceVelocity: 0
+  groundAccelerationScale: 1
+  groundDecelerationScale: 1
+  iceAccelerationScale: 0.5
+  iceDecelerationScale: 0.5
+  airAccelerationScale: 0.5
+  airDecelerationScale: 0.5
+  trampolineBounceVelocity: 15
 --- !u!114 &-5069206277376527519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,8 +231,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   maxHealth: 0
-  screenShake: 0
-  deathParticles: {fileID: 0}
+  screenShake: 1
+  deathParticles: {fileID: 620789376876034167, guid: 321b1f404b5eb5245bf7d0b498c23f75, type: 3}
 --- !u!1 &3420729250945532151
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,7 +243,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4046437761873237252}
   - component: {fileID: 1259584269019671013}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -301,7 +301,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4261003791155689879}
   - component: {fileID: 1223250512267760923}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: WallCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
