@@ -46,6 +46,8 @@ GameObject:
   - component: {fileID: 4596005832332189960}
   - component: {fileID: 7808410392803471890}
   - component: {fileID: -5069206277376527519}
+  - component: {fileID: 132584046}
+  - component: {fileID: 132584047}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -193,6 +195,7 @@ MonoBehaviour:
   bufferJumpMaxAllowedTime: 0.2
   airControl: 1
   airSprintControl: 1
+  fixedAirJumpHeight: 1
   coyoteTimeThreshold: 0.1
   groundCheck: {fileID: 1259584269019671013}
   groundCheckRadius: 0
@@ -226,13 +229,53 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 132584047}
+        m_TargetAssemblyTypeName: Flash, Assembly-CSharp
+        m_MethodName: StartFlash
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   deathEvent:
     m_PersistentCalls:
       m_Calls: []
-  maxHealth: 0
+  maxHealth: 3
   screenShake: 1
   deathParticles: {fileID: 620789376876034167, guid: 321b1f404b5eb5245bf7d0b498c23f75, type: 3}
+--- !u!114 &132584046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2760975638764731934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad3725961a12d934897fa599c42ca788, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  invinsibilityTime: 1
+--- !u!114 &132584047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2760975638764731934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a565b5b3a0f9bd44a92d955e9e42ee29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashMaterial: {fileID: 2100000, guid: d2709327aab537b46baa7a87b2f729d8, type: 2}
+  duration: 0.5
+  flashCount: 3
 --- !u!1 &3420729250945532151
 GameObject:
   m_ObjectHideFlags: 0

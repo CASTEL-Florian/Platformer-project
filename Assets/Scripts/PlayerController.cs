@@ -176,7 +176,7 @@ public class PlayerController : MonoBehaviour
             if (Mathf.Abs(velocity.x) < decelerationSpeed * Time.fixedDeltaTime)
                 velocity.x = 0;
             else
-                velocity.x -= velocity.x > 0 ? decelerationSpeed * Time.fixedDeltaTime : -deceleration * Time.fixedDeltaTime;
+                velocity.x -= velocity.x > 0 ? decelerationSpeed * Time.fixedDeltaTime : -decelerationSpeed * Time.fixedDeltaTime;
         }
 
         if (IsDashing())
@@ -304,7 +304,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void Move(Vector2 dir, bool jump, bool sprint, bool dash) // CHANGE
+    public void Move(Vector2 dir, bool jump, bool sprint, bool dash)
     {
         if (jump)
             Jump();
@@ -323,17 +323,17 @@ public class PlayerController : MonoBehaviour
         }
     }
     
-    private bool IsTurnBoostActive() // CHANGE
+    private bool IsTurnBoostActive()
     {
         return Time.time < turnBoostStopTime;
     }
     
-    private bool IsDashing() // CHANGE
+    private bool IsDashing()
     {
         return Time.time < dashStopTime;
     }
     
-    private bool CanDash() // CHANGE
+    private bool CanDash()
     {
         return Time.time >= dashCooldownStopTime;
     }
