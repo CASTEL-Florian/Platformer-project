@@ -31,14 +31,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool airSprintControl = true;
     [SerializeField] private bool fixedAirJumpHeight = true;
     [SerializeField] private float coyoteTimeThreshold = 0.1f;
+    
     [Header("Collisions verticales et horizontales")]
     [Space]
     [SerializeField] private BoxCollider2D groundCheck;
-    [SerializeField] private float groundCheckRadius;
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private LayerMask whatIsWall;
     [SerializeField] private BoxCollider2D wallCheck;
-    [SerializeField] private Transform wallCheckTransform;
     [SerializeField] private float maxFallingSpeedOnWalls = 2f;
     
     [Header("Autre")]
@@ -50,7 +49,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float airAccelerationScale = 0.5f;
     [SerializeField] private float airDecelerationScale = 0.5f;
     [SerializeField] private float trampolineBounceVelocity;
+    
+    [Header("Feedbacks")]
+    [Space]
     [SerializeField] private GameObject doubleJumpParticles;
+    [SerializeField] private ParticleSystem runParticles;
+    [SerializeField] private ParticleSystem wallSlideParticles;
+    [SerializeField] private TrailRenderer dashTrail;
+    [SerializeField] private bool emitRunParticlesOnTurnBoost = false;
 
     private Vector2 velocity = Vector2.zero;
     private Vector2 moveDirection;
@@ -92,7 +98,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         lastPosition = transform.position;
-        
+
         bool onTrampoline = false;
         bool onIce = false;
         GroundCheck(ref onTrampoline, ref onIce);
@@ -105,7 +111,7 @@ public class PlayerController : MonoBehaviour
             velocity.y = trampolineBounceVelocity;
             hasBounced = true;
         }
-        else
+        else if (!IsDashing())
         {
             if (jump)
             {
@@ -115,14 +121,15 @@ public class PlayerController : MonoBehaviour
                 if (onWall)
                 {
                     velocity = wallJumpVelocity;
-                    if (wallCheck.transform.rotation.eulerAngles.z < 90)
+                    if (transform.localScale.x > 0)
                         velocity.x = -velocity.x;
                 }
                 else
                 {
                     velocity.y = grounded ? jumpVelocity : airJumpVelocity;
                 }
-                if (!grounded && ! onWall)
+
+                if (!grounded && !onWall)
                     Instantiate(doubleJumpParticles, groundCheck.transform.position, Quaternion.identity);
             }
 
@@ -160,20 +167,33 @@ public class PlayerController : MonoBehaviour
         if (airControl || grounded)
             velocity.x += moveDirection.x * accelerationSpeed * Time.fixedDeltaTime;
 
-        if (IsTurnBoostActive())
+        bool isTurnBoostActive = IsTurnBoostActive();
+        if (isTurnBoostActive)
             velocity.x += moveDirection.x * Mathf.Abs(velocity.x) * turnBoostFactor * Time.fixedDeltaTime;
-        
-        wallCheckTransform.rotation = Quaternion.Euler(0,0,velocity.x < 0 ? 180 : 0);
+
+        if ((isTurnBoostActive && emitRunParticlesOnTurnBoost) || sprinting)
+        {
+            if (!runParticles.isPlaying)
+                runParticles.Play();
+        }
+        else if (runParticles.isPlaying)
+            runParticles.Stop();
 
         WallCheck();
         velocity.y -= gravity * Time.fixedDeltaTime;
-        
-        if(onWall)
+
+        if (onWall)
+        {
             velocity.y = Mathf.Clamp(velocity.y, -maxFallingSpeedOnWalls, maxVelocityY);
-        else if(hasBounced)
-            velocity.y = Mathf.Clamp(velocity.y, -maxVelocityY, velocity.y);
+            
+            if(!wallSlideParticles.isPlaying)
+                wallSlideParticles.Play();
+        }
         else
-            velocity.y = Mathf.Clamp(velocity.y, -maxVelocityY, maxVelocityY);
+        {
+            wallSlideParticles.Stop();
+            velocity.y = Mathf.Clamp(velocity.y, -maxVelocityY, hasBounced ? velocity.y : maxVelocityY);
+        }
 
         if (moveDirection.x == 0)
         {
@@ -187,10 +207,14 @@ public class PlayerController : MonoBehaviour
         {
             velocity.x = dashDirection * dashSpeed;
             velocity.y = 0;
+            dashTrail.emitting = true;
         }
         else
+        {
             velocity.x = Mathf.Clamp(velocity.x, -maxSpeedX, maxSpeedX);
-        
+            dashTrail.emitting = false;
+        }
+
         transform.position += (Vector3)(velocity * Time.fixedDeltaTime);
     }
 
@@ -218,7 +242,7 @@ public class PlayerController : MonoBehaviour
                 grounded = true;
                 hasBounced = false;
                 currentAirJumpCount = 0;
-                if (colliders[i].tag == "Slope")
+                if (colliders[i].CompareTag("Slope"))
                 {
                     slopeAngle = colliders[i].transform.rotation.eulerAngles.z;
                     if (slopeAngle > 90)
@@ -312,6 +336,9 @@ public class PlayerController : MonoBehaviour
     {
         if (jump)
             Jump();
+        
+        if((dir.x > 0 && transform.localScale.x < 0) || (dir.x < 0 && transform.localScale.x > 0))
+            Flip();
 
         if (allowTurnBoost && ((velocity.x < 0 && dir.x > 0) || (velocity.x > 0 && dir.x < 0)))
             turnBoostStopTime = Time.time + turnBoostDuration;
@@ -340,5 +367,11 @@ public class PlayerController : MonoBehaviour
     private bool CanDash()
     {
         return Time.time >= dashCooldownStopTime;
+    }
+
+    private void Flip()
+    {
+        Vector3 scale = transform.localScale;
+        transform.localScale = new Vector3(scale.x * -1, scale.y, scale.z);
     }
 }
