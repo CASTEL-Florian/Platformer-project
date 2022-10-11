@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int airJumpCount = 1;
     [SerializeField] private float maxVelocityY;
     [SerializeField] private float jumpVelocity;
+    [SerializeField] private float airJumpVelocity = 5;
     [SerializeField] private Vector2 wallJumpVelocity;
     [SerializeField] private float jumpReleaseMultiplier = 2f;
     [SerializeField] private float bufferJumpMaxAllowedTime = .2f;
@@ -118,7 +119,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    velocity.y = jumpVelocity;
+                    velocity.y = grounded ? jumpVelocity : airJumpVelocity;
                 }
             }
 

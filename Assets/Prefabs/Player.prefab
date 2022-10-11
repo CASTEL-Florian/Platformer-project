@@ -190,6 +190,7 @@ MonoBehaviour:
   airJumpCount: 1
   maxVelocityY: 10
   jumpVelocity: 15
+  airJumpVelocity: 8
   wallJumpVelocity: {x: 5, y: 10}
   jumpReleaseMultiplier: 2
   bufferJumpMaxAllowedTime: 0.2
