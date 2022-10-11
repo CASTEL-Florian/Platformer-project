@@ -14,7 +14,7 @@ public class PlayerInputs : MonoBehaviour
     private void OnEnable()
     {
         inputs = new InputSettings();
-        inputs.Enable();
+        inputs.Player.Enable();
         inputs.Player.Jump.performed += ctx => Jump();
         inputs.Player.Dash.performed += ctx => Dash();
     }
