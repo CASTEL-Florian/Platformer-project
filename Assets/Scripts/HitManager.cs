@@ -20,7 +20,7 @@ public class HitManager : MonoBehaviour
         if (isInvinsible)
             return;
         health.TakeDamage(value);
-        if (value > 0 && gameObject.active)
+        if (value > 0 && gameObject.activeSelf)
         {
             StartCoroutine(SetInvisible(invinsibilityTime));
         }
