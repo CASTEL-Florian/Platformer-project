@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float airAccelerationScale = 0.5f;
     [SerializeField] private float airDecelerationScale = 0.5f;
     [SerializeField] private float trampolineBounceVelocity;
+    [SerializeField] private GameObject doubleJumpParticles;
 
     private Vector2 velocity = Vector2.zero;
     private Vector2 moveDirection;
@@ -121,6 +122,8 @@ public class PlayerController : MonoBehaviour
                 {
                     velocity.y = grounded ? jumpVelocity : airJumpVelocity;
                 }
+                if (!grounded && ! onWall)
+                    Instantiate(doubleJumpParticles, groundCheck.transform.position, Quaternion.identity);
             }
 
             if (velocity.y > 0 && !jumpButtonHeld && jumpCancellable)
