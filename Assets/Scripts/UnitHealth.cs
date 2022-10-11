@@ -31,15 +31,16 @@ public class UnitHealth : MonoBehaviour
         currentHealth -= value;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         damageEvent.Invoke();
+        if (screenShake)
+            cam.StartShake(0.1f);
         if (currentHealth <= 0)
         {
             alive = false;
-            deathEvent.Invoke();
             if (deathParticles)
                 Instantiate(deathParticles, transform.position, transform.rotation);
+            deathEvent.Invoke();
+            Destroy(gameObject);
         }
-        if (screenShake)
-            StartCoroutine(cam.Shake());
     }
 
 

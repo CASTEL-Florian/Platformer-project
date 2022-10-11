@@ -19,6 +19,10 @@ public class MyCamera : MonoBehaviour
         transform.position = shakeOffset + new Vector3(0,0,transform.position.z);
     }
 
+    public void StartShake(float intensity = 0.1f)
+    {
+        StartCoroutine(Shake(intensity));
+    }
     public IEnumerator Shake(float intensity = 1)
     {
         float elapsed = 0;
