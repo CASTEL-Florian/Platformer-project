@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -56,7 +58,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private ParticleSystem runParticles;
     [SerializeField] private ParticleSystem wallSlideParticles;
     [SerializeField] private TrailRenderer dashTrail;
-    [SerializeField] private bool emitRunParticlesOnTurnBoost = false;
+    [SerializeField] [Min(0)] private float onLandVibrationIntensity;
+    [SerializeField] [Min(0)] private float onLandVibrationDuration;
+    [SerializeField] [Min(0)] private float onHitVibrationIntensity;
+    [SerializeField] [Min(0)] private float onHitVibrationDuration;
 
     private Vector2 velocity = Vector2.zero;
     private Vector2 moveDirection;
@@ -129,7 +134,7 @@ public class PlayerController : MonoBehaviour
                     velocity.y = grounded ? jumpVelocity : airJumpVelocity;
                 }
 
-                if (!grounded && !onWall)
+                if (!grounded && !onWall && FeedbackController.Instance.EmitDoubleJumpEffect)
                     Instantiate(doubleJumpParticles, groundCheck.transform.position, Quaternion.identity);
             }
 
@@ -171,7 +176,9 @@ public class PlayerController : MonoBehaviour
         if (isTurnBoostActive)
             velocity.x += moveDirection.x * Mathf.Abs(velocity.x) * turnBoostFactor * Time.fixedDeltaTime;
 
-        if ((isTurnBoostActive && emitRunParticlesOnTurnBoost) || sprinting)
+        if (!IsDashing() && (grounded || !FeedbackController.Instance.EmitRunEffectOnGroundOnly) &&
+            ((isTurnBoostActive && FeedbackController.Instance.EmitRunEffectOnTurnBoost) || 
+            (sprinting && FeedbackController.Instance.EmitRunEffect)))
         {
             if (!runParticles.isPlaying)
                 runParticles.Play();
@@ -186,7 +193,7 @@ public class PlayerController : MonoBehaviour
         {
             velocity.y = Mathf.Clamp(velocity.y, -maxFallingSpeedOnWalls, maxVelocityY);
             
-            if(!wallSlideParticles.isPlaying)
+            if(!wallSlideParticles.isPlaying && FeedbackController.Instance.EmitWallSlideEffect)
                 wallSlideParticles.Play();
         }
         else
@@ -207,7 +214,7 @@ public class PlayerController : MonoBehaviour
         {
             velocity.x = dashDirection * dashSpeed;
             velocity.y = 0;
-            dashTrail.emitting = true;
+            dashTrail.emitting = FeedbackController.Instance.EmitDashEffect;
         }
         else
         {
@@ -220,6 +227,7 @@ public class PlayerController : MonoBehaviour
 
     private void GroundCheck(ref bool onTrampoline, ref bool onIce)
     {
+        bool wasGrounded = grounded;
         grounded = false;
         slopeAngle = 0;
         if (velocity.y > 0)
@@ -242,6 +250,10 @@ public class PlayerController : MonoBehaviour
                 grounded = true;
                 hasBounced = false;
                 currentAirJumpCount = 0;
+
+                if (!wasGrounded)
+                    StartCoroutine(GamepadVibrationCo(onLandVibrationIntensity, onLandVibrationDuration));
+
                 if (colliders[i].CompareTag("Slope"))
                 {
                     slopeAngle = colliders[i].transform.rotation.eulerAngles.z;
@@ -373,5 +385,13 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 scale = transform.localScale;
         transform.localScale = new Vector3(scale.x * -1, scale.y, scale.z);
+    }
+
+    private IEnumerator GamepadVibrationCo(float intensity, float duration)
+    {
+        Gamepad.current.SetMotorSpeeds(intensity, intensity);
+        yield return new WaitForSeconds(duration);
+        Gamepad.current.SetMotorSpeeds(0f, 0f);
+        yield return null;
     }
 }
