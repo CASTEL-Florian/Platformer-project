@@ -26,7 +26,8 @@ public class PlayerInputs : MonoBehaviour
 
     private void Jump()
     {
-        jump = true;
+        if (Time.timeScale == 1)
+            jump = true;
     }
 
     private void Dash()

@@ -18,11 +18,17 @@ public class PauseMenu : MonoBehaviour
     
     public void Pause()
     {
-        if(pauseMenu.activeSelf)
+        if (pauseMenu.activeSelf)
+        {
             pauseMenu.SetActive(false);
-        else {
+            Time.timeScale = 1;
+        }
+        else
+        {
             if (settingsMenu.activeSelf)
                 settingsMenu.SetActive(false);
+            else
+                Time.timeScale = 0;
             pauseMenu.SetActive(true);
             EventSystem.current.SetSelectedGameObject(pauseFirstSelected);
         }
