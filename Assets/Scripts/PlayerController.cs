@@ -137,7 +137,6 @@ public class PlayerController : MonoBehaviour
                 if (!grounded && !onWall && FeedbackController.Instance.EmitDoubleJumpEffect)
                     Instantiate(doubleJumpParticles, groundCheck.transform.position, Quaternion.identity);
             }
-
             if (velocity.y > 0 && !jumpButtonHeld && jumpCancellable)
             {
                 velocity.y /= jumpReleaseMultiplier;
@@ -245,7 +244,7 @@ public class PlayerController : MonoBehaviour
                 onIce = colliders[i].CompareTag("Ice");
 
                 if (Time.time < bufferedJumpTime)
-                    jump = true;
+                    Jump();
 
                 grounded = true;
                 hasBounced = false;
@@ -389,9 +388,12 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator GamepadVibrationCo(float intensity, float duration)
     {
-        Gamepad.current.SetMotorSpeeds(intensity, intensity);
-        yield return new WaitForSeconds(duration);
-        Gamepad.current.SetMotorSpeeds(0f, 0f);
-        yield return null;
+        if (Gamepad.current != null)
+        {
+            Gamepad.current.SetMotorSpeeds(intensity, intensity);
+            yield return new WaitForSeconds(duration);
+            Gamepad.current.SetMotorSpeeds(0f, 0f);
+            yield return null;
+        }
     }
 }

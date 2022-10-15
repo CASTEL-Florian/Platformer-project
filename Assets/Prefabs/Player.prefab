@@ -160,7 +160,7 @@ MonoBehaviour:
   gravity: 20
   airJumpCount: 1
   maxVelocityY: 10
-  jumpVelocity: 15
+  jumpVelocity: 10
   airJumpVelocity: 8
   wallJumpVelocity: {x: 5, y: 10}
   jumpReleaseMultiplier: 2
@@ -189,7 +189,10 @@ MonoBehaviour:
   runParticles: {fileID: 4304402885649461124}
   wallSlideParticles: {fileID: 8014108323006871484}
   dashTrail: {fileID: 1128026736185078506}
-  emitRunParticlesOnTurnBoost: 0
+  onLandVibrationIntensity: 0
+  onLandVibrationDuration: 0
+  onHitVibrationIntensity: 0
+  onHitVibrationDuration: 0
 --- !u!114 &-5069206277376527519
 MonoBehaviour:
   m_ObjectHideFlags: 0
