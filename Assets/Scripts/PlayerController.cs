@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashSpeed;
     [SerializeField] private float dashDuration;
     [SerializeField] private float dashCooldown;
+    [SerializeField] private AnimationCurve speedOnSlope;
     
     [Header("Saut")]
     [Space]
@@ -41,6 +42,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask whatIsWall;
     [SerializeField] private BoxCollider2D wallCheck;
     [SerializeField] private float maxFallingSpeedOnWalls = 2f;
+    [SerializeField] private float maxSlopeAngle = 45;
     
     [Header("Autre")]
     [Space]
@@ -62,7 +64,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] [Min(0)] private float onLandVibrationDuration;
     [SerializeField] [Min(0)] private float onHitVibrationIntensity;
     [SerializeField] [Min(0)] private float onHitVibrationDuration;
-    [SerializeField] private float animationLandSpeedThreshold = 1f;
     [SerializeField] Animator animator;
 
     private Vector2 velocity = Vector2.zero;
@@ -74,6 +75,7 @@ public class PlayerController : MonoBehaviour
     private int groundObjectId;
     private bool grounded = false;
     private bool onWall = false;
+    private bool wasGroundedLastFrame = false;
     
     private int currentAirJumpCount;
     private bool jump = false;
@@ -90,7 +92,6 @@ public class PlayerController : MonoBehaviour
     private float dashCooldownStopTime = 0f;
 
     private bool hasBounced = false;
-    private SpriteRenderer sp;
     
     
     private float timeSinceLeftGround = 0;
@@ -98,14 +99,12 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
-        sp = GetComponent<SpriteRenderer>();
         currentAirJumpCount = airJumpCount;
     }
 
     private void FixedUpdate()
     {
         lastPosition = transform.position;
-
         bool onTrampoline = false;
         bool onIce = false;
         GroundCheck(ref onTrampoline, ref onIce);
@@ -138,7 +137,7 @@ public class PlayerController : MonoBehaviour
                     velocity.y = grounded ? jumpVelocity : airJumpVelocity;
                 }
 
-                if (!grounded && !onWall && FeedbackController.Instance.EmitDoubleJumpEffect)
+                if ((!grounded || slopeAngle > maxSlopeAngle) && !onWall && FeedbackController.Instance.EmitDoubleJumpEffect)
                     Instantiate(doubleJumpParticles, groundCheck.transform.position, Quaternion.identity);
             }
             if (velocity.y > 0 && !jumpButtonHeld && jumpCancellable)
@@ -221,7 +220,13 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            velocity.x = Mathf.Clamp(velocity.x, -maxSpeedX, maxSpeedX);
+            float slopeSpeedModifier = 1;
+            if (velocity.x * slopeAngle > 0)
+                if (Mathf.Abs(slopeAngle) > Mathf.Abs(maxSlopeAngle))
+                    slopeSpeedModifier = 0;
+                else
+                    slopeSpeedModifier = speedOnSlope.Evaluate(Mathf.Abs(slopeAngle / maxSlopeAngle));
+            velocity.x = Mathf.Clamp(velocity.x, -maxSpeedX * slopeSpeedModifier, maxSpeedX * slopeSpeedModifier);
             dashTrail.emitting = false;
         }
 
@@ -247,12 +252,9 @@ public class PlayerController : MonoBehaviour
                 onTrampoline = colliders[i].CompareTag("Trampoline") || onTrampoline;
                 onIce = colliders[i].CompareTag("Ice");
 
-                if (Time.time < bufferedJumpTime)
-                    Jump();
 
                 grounded = true;
                 hasBounced = false;
-                currentAirJumpCount = 0;
 
                 if (!wasGrounded)
                     StartCoroutine(GamepadVibrationCo(onLandVibrationIntensity, onLandVibrationDuration));
@@ -263,10 +265,14 @@ public class PlayerController : MonoBehaviour
                     if (slopeAngle > 90)
                         slopeAngle -= 360;
                 }
+                if (Time.time < bufferedJumpTime)
+                    Jump();
                 if (groundObjectId == colliders[i].GetInstanceID())
                     transform.Translate(colliders[i].transform.position - (Vector3)groundPosition);
                 groundObjectId = colliders[i].GetInstanceID();
                 groundPosition = colliders[i].transform.position;
+                if (slopeAngle < maxSlopeAngle)
+                    currentAirJumpCount = 0;
             }
         }
         if (!grounded)
@@ -294,7 +300,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (grounded || onWall || (timeSinceLeftGround < coyoteTimeThreshold && velocity.y <= 0))
+        if ((grounded || onWall || (timeSinceLeftGround < coyoteTimeThreshold && velocity.y <= 0)) && slopeAngle < maxSlopeAngle)
         {
             jump = true;
             timeSinceLeftGround = coyoteTimeThreshold;
@@ -333,8 +339,16 @@ public class PlayerController : MonoBehaviour
                 Vector2 translation = colliderDistance.pointA - colliderDistance.pointB;
                 if (hit.gameObject.layer == LayerMask.NameToLayer("Slope"))
                 {
-                    translation.y = Mathf.Abs(translation.x) < 0.01 ? translation.y : Mathf.Abs(translation.magnitude / Mathf.Sin(Mathf.Atan(translation.y / translation.x)));
-                    translation.x = 0;
+                    if (slopeAngle < maxSlopeAngle)
+                    {
+                        translation.y = Mathf.Abs(translation.x) < 0.01 ? translation.y : Mathf.Abs(translation.magnitude / Mathf.Sin(Mathf.Atan(translation.y / translation.x)));
+                        translation.x = 0;
+                    }
+                    else
+                    {
+                        translation.y = 0;
+                        translation.x = Mathf.Abs(translation.y) < 0.01 ? translation.x : Mathf.Abs(translation.magnitude / Mathf.Sin(Mathf.Atan(translation.x / translation.y)));
+                    }
                 }
                 transform.Translate(translation);
                 if (Mathf.Abs(translation.x) >= 0.01f)
@@ -343,12 +357,13 @@ public class PlayerController : MonoBehaviour
                 }
                 if (Mathf.Abs(translation.y) >= 0.01f)
                 {
-                    if (velocity.y < -Mathf.Abs(animationLandSpeedThreshold) && FeedbackController.Instance.DeformPlayerEffect)
+                    if (!wasGroundedLastFrame && grounded && FeedbackController.Instance.DeformPlayerEffect)
                         animator.SetTrigger("land");
                     velocity.y = 0;
                 }
             }
         }
+        wasGroundedLastFrame = grounded;
     }
 
     public void Move(Vector2 dir, bool jump, bool sprint, bool dash)

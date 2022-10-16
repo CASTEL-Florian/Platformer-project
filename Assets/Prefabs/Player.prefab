@@ -219,12 +219,36 @@ MonoBehaviour:
   sprintMaxVelocityX: 8
   sprintAcceleration: 15
   allowTurnBoost: 1
-  turnBoostFactor: 0
-  turnBoostDuration: 0
+  turnBoostFactor: 6
+  turnBoostDuration: 0.5
   allowDash: 1
-  dashSpeed: 10
+  dashSpeed: 30
   dashDuration: 0.3
   dashCooldown: 1
+  speedOnSlope:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.20543616
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -3.1248546
+      outSlope: -3.1248546
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.02970922
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   gravity: 20
   airJumpCount: 1
   maxVelocityY: 10
@@ -246,6 +270,7 @@ MonoBehaviour:
     m_Bits: 1
   wallCheck: {fileID: 1223250512267760923}
   maxFallingSpeedOnWalls: 2
+  maxSlopeAngle: 45
   groundAccelerationScale: 1
   groundDecelerationScale: 1
   iceAccelerationScale: 0.5
@@ -257,11 +282,10 @@ MonoBehaviour:
   runParticles: {fileID: 4304402885649461124}
   wallSlideParticles: {fileID: 8014108323006871484}
   dashTrail: {fileID: 1128026736185078506}
-  onLandVibrationIntensity: 0
-  onLandVibrationDuration: 0
-  onHitVibrationIntensity: 0
-  onHitVibrationDuration: 0
-  animationLandSpeedThreshold: 2
+  onLandVibrationIntensity: 0.005
+  onLandVibrationDuration: 0.1
+  onHitVibrationIntensity: 0.1
+  onHitVibrationDuration: 0.5
   animator: {fileID: 437256865513870028}
 --- !u!114 &-5069206277376527519
 MonoBehaviour:
