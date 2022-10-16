@@ -357,10 +357,10 @@ public class PlayerController : MonoBehaviour
                 }
                 if (Mathf.Abs(translation.y) >= 0.01f)
                 {
-                    if (!wasGroundedLastFrame && grounded && FeedbackController.Instance.DeformPlayerEffect)
-                        animator.SetTrigger("land");
                     velocity.y = 0;
                 }
+                if (!wasGroundedLastFrame && slopeAngle < maxSlopeAngle && grounded && FeedbackController.Instance.DeformPlayerEffect)
+                    animator.SetTrigger("land");
             }
         }
         wasGroundedLastFrame = grounded;
