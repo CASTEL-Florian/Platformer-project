@@ -62,6 +62,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] [Min(0)] private float onLandVibrationDuration;
     [SerializeField] [Min(0)] private float onHitVibrationIntensity;
     [SerializeField] [Min(0)] private float onHitVibrationDuration;
+    [SerializeField] private float animationLandSpeedThreshold = 1f;
+    [SerializeField] Animator animator;
 
     private Vector2 velocity = Vector2.zero;
     private Vector2 moveDirection;
@@ -120,6 +122,8 @@ public class PlayerController : MonoBehaviour
         {
             if (jump)
             {
+                if (FeedbackController.Instance.DeformPlayerEffect)
+                    animator.SetTrigger("jump");
                 if (grounded || !fixedAirJumpHeight)
                     jumpCancellable = true;
                 jump = false;
@@ -338,7 +342,11 @@ public class PlayerController : MonoBehaviour
                     velocity.x = 0;
                 }
                 if (Mathf.Abs(translation.y) >= 0.01f)
+                {
+                    if (velocity.y < -Mathf.Abs(animationLandSpeedThreshold) && FeedbackController.Instance.DeformPlayerEffect)
+                        animator.SetTrigger("land");
                     velocity.y = 0;
+                }
             }
         }
     }

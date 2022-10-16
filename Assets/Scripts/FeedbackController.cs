@@ -14,7 +14,8 @@ public class FeedbackController : MonoBehaviour
     [SerializeField] private Toggle doubleJumpEffectToggle;
     [SerializeField] private Toggle wallSlideEffectToggle;
     [SerializeField] private Toggle dashEffectToggle;
-    
+    [SerializeField] private Toggle deformPlayerEffectToggle;
+
     [field: Header("Pre-selected")]
     [field: Space]
     [SerializeField] private bool runEffect = true;
@@ -23,6 +24,7 @@ public class FeedbackController : MonoBehaviour
     [SerializeField] private bool doubleJumpEffect = true;
     [SerializeField] private bool wallSlideEffect = true;
     [SerializeField] private bool dashEffect = true;
+    [SerializeField] private bool deformPlayerEffect = true;
 
     public bool EmitRunEffect
     {
@@ -53,9 +55,15 @@ public class FeedbackController : MonoBehaviour
     public bool EmitDashEffect
     {
         get => dashEffectToggle.isOn;
-        private set {}
+        private set { }
     }
-    
+
+    public bool DeformPlayerEffect
+    {
+        get => deformPlayerEffectToggle.isOn;
+        private set { }
+    }
+
     public static FeedbackController Instance;
 
     private void Awake()
@@ -70,6 +78,7 @@ public class FeedbackController : MonoBehaviour
         doubleJumpEffectToggle.SetIsOnWithoutNotify(doubleJumpEffect);
         wallSlideEffectToggle.SetIsOnWithoutNotify(wallSlideEffect);
         dashEffectToggle.SetIsOnWithoutNotify(dashEffect);
+        deformPlayerEffectToggle.SetIsOnWithoutNotify(deformPlayerEffect);
     }
 
     public void UpdateAllToggle()
@@ -79,7 +88,8 @@ public class FeedbackController : MonoBehaviour
                                        doubleJumpEffectToggle.isOn &&
                                        wallSlideEffectToggle.isOn &&
                                        dashEffectToggle.isOn &&
-                                       runEffectOnGroundOnlyToggle.isOn);
+                                       runEffectOnGroundOnlyToggle.isOn &&
+                                       deformPlayerEffectToggle.isOn);
     }
 
     public void OnEmitAll()
@@ -90,5 +100,6 @@ public class FeedbackController : MonoBehaviour
         doubleJumpEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
         wallSlideEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
         dashEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
+        deformPlayerEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
     }
 }
