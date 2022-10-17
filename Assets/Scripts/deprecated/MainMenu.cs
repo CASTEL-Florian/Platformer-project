@@ -11,10 +11,10 @@ namespace deprecated
         protected virtual void OnEnable()
         {
             inputs = new InputSettings();
-            inputs.MainMenu.Enable();
-            inputs.MainMenu.MenuUp.performed += ctx => arrow.GoUp();
-            inputs.MainMenu.MenuDown.performed += ctx => arrow.GoDown();
-            inputs.MainMenu.MenuSelect.performed += ctx => arrow.PressButton();
+            inputs.Menus.Enable();
+            inputs.Menus.MenuUp.performed += ctx => arrow.GoUp();
+            inputs.Menus.MenuDown.performed += ctx => arrow.GoDown();
+            inputs.Menus.MenuSelect.performed += ctx => arrow.PressButton();
         }
 
         public void LoadScene(int sceneIndex)
@@ -29,10 +29,10 @@ namespace deprecated
 
         protected virtual void OnDisable()
         {
-            inputs.MainMenu.Disable();
-            inputs.MainMenu.MenuUp.performed -= ctx => arrow.GoUp();
-            inputs.MainMenu.MenuDown.performed -= ctx => arrow.GoDown();
-            inputs.MainMenu.MenuSelect.performed -= ctx => arrow.PressButton();
+            inputs.Menus.Disable();
+            inputs.Menus.MenuUp.performed -= ctx => arrow.GoUp();
+            inputs.Menus.MenuDown.performed -= ctx => arrow.GoDown();
+            inputs.Menus.MenuSelect.performed -= ctx => arrow.PressButton();
         }
     }
 }

@@ -174,12 +174,11 @@ public class PlayerController : MonoBehaviour
         if (airControl || grounded)
             velocity.x += moveDirection.x * accelerationSpeed * Time.fixedDeltaTime;
 
-        bool isTurnBoostActive = IsTurnBoostActive();
-        if (isTurnBoostActive)
+        if (IsTurnBoostActive())
             velocity.x += moveDirection.x * Mathf.Abs(velocity.x) * turnBoostFactor * Time.fixedDeltaTime;
 
         if (!IsDashing() && (grounded || !FeedbackController.Instance.EmitRunEffectOnGroundOnly) &&
-            ((isTurnBoostActive && FeedbackController.Instance.EmitRunEffectOnTurnBoost) || 
+            ((IsTurnBoostActive() && FeedbackController.Instance.EmitRunEffectOnTurnBoost) || 
             (sprinting && FeedbackController.Instance.EmitRunEffect)))
         {
             if (!runParticles.isPlaying)

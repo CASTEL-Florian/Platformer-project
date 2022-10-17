@@ -8,22 +8,22 @@ namespace deprecated
         protected override void OnEnable()
         {
             inputs = new InputSettings();
-            inputs.MainMenu.Enable();
-            inputs.MainMenu.MenuUp.performed += ctx => settingsArrow.GoUp();
-            inputs.MainMenu.MenuDown.performed += ctx => settingsArrow.GoDown();
-            inputs.MainMenu.MenuRight.performed += ctx => settingsArrow.GoRight();
-            inputs.MainMenu.MenuLeft.performed += ctx => settingsArrow.GoLeft();
-            inputs.MainMenu.MenuSelect.performed += ctx => settingsArrow.PressButton();
+            inputs.Menus.Enable();
+            inputs.Menus.MenuUp.performed += ctx => settingsArrow.GoUp();
+            inputs.Menus.MenuDown.performed += ctx => settingsArrow.GoDown();
+            inputs.Menus.MenuRight.performed += ctx => settingsArrow.GoRight();
+            inputs.Menus.MenuLeft.performed += ctx => settingsArrow.GoLeft();
+            inputs.Menus.MenuSelect.performed += ctx => settingsArrow.PressButton();
         }
 
         protected override void OnDisable()
         {
-            inputs.MainMenu.Disable();
-            inputs.MainMenu.MenuUp.performed -= ctx => settingsArrow.GoUp();
-            inputs.MainMenu.MenuDown.performed -= ctx => settingsArrow.GoDown();
-            inputs.MainMenu.MenuRight.performed -= ctx => settingsArrow.GoRight();
-            inputs.MainMenu.MenuLeft.performed -= ctx => settingsArrow.GoLeft();
-            inputs.MainMenu.MenuSelect.performed -= ctx => settingsArrow.PressButton();
+            inputs.Menus.Disable();
+            inputs.Menus.MenuUp.performed -= ctx => settingsArrow.GoUp();
+            inputs.Menus.MenuDown.performed -= ctx => settingsArrow.GoDown();
+            inputs.Menus.MenuRight.performed -= ctx => settingsArrow.GoRight();
+            inputs.Menus.MenuLeft.performed -= ctx => settingsArrow.GoLeft();
+            inputs.Menus.MenuSelect.performed -= ctx => settingsArrow.PressButton();
         }
     }
 }

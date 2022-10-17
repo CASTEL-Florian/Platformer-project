@@ -71,7 +71,6 @@ public class FeedbackController : MonoBehaviour
         Debug.Assert(Instance == null);
         Instance = this;
 
-        UpdateAllToggle();
         runEffectToggle.SetIsOnWithoutNotify(runEffect);
         runEffectOnTurnBoostToggle.SetIsOnWithoutNotify(runEffectOnTurnBoost);
         runEffectOnGroundOnlyToggle.SetIsOnWithoutNotify(runEffectOnGroundOnly);
@@ -79,6 +78,7 @@ public class FeedbackController : MonoBehaviour
         wallSlideEffectToggle.SetIsOnWithoutNotify(wallSlideEffect);
         dashEffectToggle.SetIsOnWithoutNotify(dashEffect);
         deformPlayerEffectToggle.SetIsOnWithoutNotify(deformPlayerEffect);
+        UpdateAllToggle();
     }
 
     public void UpdateAllToggle()

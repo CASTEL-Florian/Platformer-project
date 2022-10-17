@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5808649667917242760}
   - component: {fileID: 5808649667917242762}
   - component: {fileID: 5808649667917242767}
-  - component: {fileID: 5808649667917242761}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -75,19 +74,3 @@ MonoBehaviour:
   wallSlideEffect: 1
   dashEffect: 1
   deformPlayerEffect: 1
---- !u!114 &5808649667917242761
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5808649667917242766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e13c8f63de444861b48e8e533d51afbe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pauseMenu: {fileID: 0}
-  settingsMenu: {fileID: 0}
-  pauseFirstSelected: {fileID: 0}
-  settingsFirstSelected: {fileID: 0}

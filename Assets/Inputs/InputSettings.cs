@@ -365,7 +365,7 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""MainMenu"",
+            ""name"": ""Menus"",
             ""id"": ""3f045acf-228f-4f08-8649-b33d6063be0c"",
             ""actions"": [
                 {
@@ -611,14 +611,14 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
-        // MainMenu
-        m_MainMenu = asset.FindActionMap("MainMenu", throwIfNotFound: true);
-        m_MainMenu_MenuDown = m_MainMenu.FindAction("MenuDown", throwIfNotFound: true);
-        m_MainMenu_MenuUp = m_MainMenu.FindAction("MenuUp", throwIfNotFound: true);
-        m_MainMenu_MenuRight = m_MainMenu.FindAction("MenuRight", throwIfNotFound: true);
-        m_MainMenu_MenuLeft = m_MainMenu.FindAction("MenuLeft", throwIfNotFound: true);
-        m_MainMenu_MenuSelect = m_MainMenu.FindAction("MenuSelect", throwIfNotFound: true);
-        m_MainMenu_Echap = m_MainMenu.FindAction("Echap", throwIfNotFound: true);
+        // Menus
+        m_Menus = asset.FindActionMap("Menus", throwIfNotFound: true);
+        m_Menus_MenuDown = m_Menus.FindAction("MenuDown", throwIfNotFound: true);
+        m_Menus_MenuUp = m_Menus.FindAction("MenuUp", throwIfNotFound: true);
+        m_Menus_MenuRight = m_Menus.FindAction("MenuRight", throwIfNotFound: true);
+        m_Menus_MenuLeft = m_Menus.FindAction("MenuLeft", throwIfNotFound: true);
+        m_Menus_MenuSelect = m_Menus.FindAction("MenuSelect", throwIfNotFound: true);
+        m_Menus_Echap = m_Menus.FindAction("Echap", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -732,54 +732,54 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
     }
     public PlayerActions @Player => new PlayerActions(this);
 
-    // MainMenu
-    private readonly InputActionMap m_MainMenu;
-    private IMainMenuActions m_MainMenuActionsCallbackInterface;
-    private readonly InputAction m_MainMenu_MenuDown;
-    private readonly InputAction m_MainMenu_MenuUp;
-    private readonly InputAction m_MainMenu_MenuRight;
-    private readonly InputAction m_MainMenu_MenuLeft;
-    private readonly InputAction m_MainMenu_MenuSelect;
-    private readonly InputAction m_MainMenu_Echap;
-    public struct MainMenuActions
+    // Menus
+    private readonly InputActionMap m_Menus;
+    private IMenusActions m_MenusActionsCallbackInterface;
+    private readonly InputAction m_Menus_MenuDown;
+    private readonly InputAction m_Menus_MenuUp;
+    private readonly InputAction m_Menus_MenuRight;
+    private readonly InputAction m_Menus_MenuLeft;
+    private readonly InputAction m_Menus_MenuSelect;
+    private readonly InputAction m_Menus_Echap;
+    public struct MenusActions
     {
         private @InputSettings m_Wrapper;
-        public MainMenuActions(@InputSettings wrapper) { m_Wrapper = wrapper; }
-        public InputAction @MenuDown => m_Wrapper.m_MainMenu_MenuDown;
-        public InputAction @MenuUp => m_Wrapper.m_MainMenu_MenuUp;
-        public InputAction @MenuRight => m_Wrapper.m_MainMenu_MenuRight;
-        public InputAction @MenuLeft => m_Wrapper.m_MainMenu_MenuLeft;
-        public InputAction @MenuSelect => m_Wrapper.m_MainMenu_MenuSelect;
-        public InputAction @Echap => m_Wrapper.m_MainMenu_Echap;
-        public InputActionMap Get() { return m_Wrapper.m_MainMenu; }
+        public MenusActions(@InputSettings wrapper) { m_Wrapper = wrapper; }
+        public InputAction @MenuDown => m_Wrapper.m_Menus_MenuDown;
+        public InputAction @MenuUp => m_Wrapper.m_Menus_MenuUp;
+        public InputAction @MenuRight => m_Wrapper.m_Menus_MenuRight;
+        public InputAction @MenuLeft => m_Wrapper.m_Menus_MenuLeft;
+        public InputAction @MenuSelect => m_Wrapper.m_Menus_MenuSelect;
+        public InputAction @Echap => m_Wrapper.m_Menus_Echap;
+        public InputActionMap Get() { return m_Wrapper.m_Menus; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(MainMenuActions set) { return set.Get(); }
-        public void SetCallbacks(IMainMenuActions instance)
+        public static implicit operator InputActionMap(MenusActions set) { return set.Get(); }
+        public void SetCallbacks(IMenusActions instance)
         {
-            if (m_Wrapper.m_MainMenuActionsCallbackInterface != null)
+            if (m_Wrapper.m_MenusActionsCallbackInterface != null)
             {
-                @MenuDown.started -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuDown;
-                @MenuDown.performed -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuDown;
-                @MenuDown.canceled -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuDown;
-                @MenuUp.started -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuUp;
-                @MenuUp.performed -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuUp;
-                @MenuUp.canceled -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuUp;
-                @MenuRight.started -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuRight;
-                @MenuRight.performed -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuRight;
-                @MenuRight.canceled -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuRight;
-                @MenuLeft.started -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuLeft;
-                @MenuLeft.performed -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuLeft;
-                @MenuLeft.canceled -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuLeft;
-                @MenuSelect.started -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuSelect;
-                @MenuSelect.performed -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuSelect;
-                @MenuSelect.canceled -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnMenuSelect;
-                @Echap.started -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnEchap;
-                @Echap.performed -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnEchap;
-                @Echap.canceled -= m_Wrapper.m_MainMenuActionsCallbackInterface.OnEchap;
+                @MenuDown.started -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuDown;
+                @MenuDown.performed -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuDown;
+                @MenuDown.canceled -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuDown;
+                @MenuUp.started -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuUp;
+                @MenuUp.performed -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuUp;
+                @MenuUp.canceled -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuUp;
+                @MenuRight.started -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuRight;
+                @MenuRight.performed -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuRight;
+                @MenuRight.canceled -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuRight;
+                @MenuLeft.started -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuLeft;
+                @MenuLeft.performed -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuLeft;
+                @MenuLeft.canceled -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuLeft;
+                @MenuSelect.started -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuSelect;
+                @MenuSelect.performed -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuSelect;
+                @MenuSelect.canceled -= m_Wrapper.m_MenusActionsCallbackInterface.OnMenuSelect;
+                @Echap.started -= m_Wrapper.m_MenusActionsCallbackInterface.OnEchap;
+                @Echap.performed -= m_Wrapper.m_MenusActionsCallbackInterface.OnEchap;
+                @Echap.canceled -= m_Wrapper.m_MenusActionsCallbackInterface.OnEchap;
             }
-            m_Wrapper.m_MainMenuActionsCallbackInterface = instance;
+            m_Wrapper.m_MenusActionsCallbackInterface = instance;
             if (instance != null)
             {
                 @MenuDown.started += instance.OnMenuDown;
@@ -803,7 +803,7 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
             }
         }
     }
-    public MainMenuActions @MainMenu => new MainMenuActions(this);
+    public MenusActions @Menus => new MenusActions(this);
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -811,7 +811,7 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
         void OnSprint(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
     }
-    public interface IMainMenuActions
+    public interface IMenusActions
     {
         void OnMenuDown(InputAction.CallbackContext context);
         void OnMenuUp(InputAction.CallbackContext context);

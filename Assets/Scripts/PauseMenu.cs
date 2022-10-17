@@ -12,8 +12,13 @@ public class PauseMenu : MonoBehaviour
     
     private void OnEnable(){
         inputs = new InputSettings();
-        inputs.MainMenu.Enable();
-        inputs.MainMenu.Echap.performed += ctx => Pause();
+        inputs.Menus.Enable();
+        inputs.Menus.Echap.performed += ctx => Pause();
+    }
+    
+    private void OnDisable(){
+        inputs.Menus.Echap.performed -= ctx => Pause();
+        inputs.Menus.Disable();
     }
     
     public void Pause()

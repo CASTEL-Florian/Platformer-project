@@ -10,7 +10,7 @@ namespace deprecated
         protected override void OnEnable()
         {
             base.OnEnable();
-            inputs.MainMenu.Echap.performed += ctx => Pause();
+            inputs.Menus.Echap.performed += ctx => Pause();
         }
     
         private void Pause()
