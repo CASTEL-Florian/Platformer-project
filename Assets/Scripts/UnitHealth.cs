@@ -36,8 +36,9 @@ public class UnitHealth : MonoBehaviour
         if (currentHealth <= 0)
         {
             alive = false;
-            if (deathParticles)
+            if (deathParticles && FeedbackController.Instance.DieEffect)
                 Instantiate(deathParticles, transform.position, transform.rotation);
+            GamepadVibrations.Instance.OnDie();
             deathEvent.Invoke();
             Destroy(gameObject);
         }

@@ -64,10 +64,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private ParticleSystem runParticles;
     [SerializeField] private ParticleSystem wallSlideParticles;
     [SerializeField] private TrailRenderer dashTrail;
-    [SerializeField] [Min(0)] private float onLandVibrationIntensity;
-    [SerializeField] [Min(0)] private float onLandVibrationDuration;
-    [SerializeField] [Min(0)] private float onHitVibrationIntensity;
-    [SerializeField] [Min(0)] private float onHitVibrationDuration;
     [SerializeField] Animator animator;
 
     private Vector2 velocity = Vector2.zero;
@@ -276,7 +272,7 @@ public class PlayerController : MonoBehaviour
                 hasBounced = false;
 
                 if (!wasGrounded)
-                    StartCoroutine(GamepadVibrationCo(onLandVibrationIntensity, onLandVibrationDuration));
+                    GamepadVibrations.Instance.OnLand();
 
                 if (colliders[i].CompareTag("Slope"))
                 {
@@ -355,7 +351,6 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.gameObject.layer == LayerMask.NameToLayer("Plateform"))
                 {
-                    Debug.Log(platformGoDownTimePressed);
                     if ((!grounded && lastPosition.y - transform.position.y + boxCollider.bounds.min.y <
                         hit.bounds.max.y) || velocity.y > 0 ||
                         platformGoDownTimePressed >= platformGoDownMinimumPressTime)
@@ -442,16 +437,5 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 scale = transform.localScale;
         transform.localScale = new Vector3(scale.x * -1, scale.y, scale.z);
-    }
-
-    private IEnumerator GamepadVibrationCo(float intensity, float duration)
-    {
-        if (Gamepad.current != null)
-        {
-            Gamepad.current.SetMotorSpeeds(intensity, intensity);
-            yield return new WaitForSeconds(duration);
-            Gamepad.current.SetMotorSpeeds(0f, 0f);
-            yield return null;
-        }
     }
 }

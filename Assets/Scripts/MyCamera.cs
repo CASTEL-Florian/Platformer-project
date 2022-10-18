@@ -21,7 +21,8 @@ public class MyCamera : MonoBehaviour
 
     public void StartShake(float intensity = 0.1f)
     {
-        StartCoroutine(Shake(intensity));
+        if(FeedbackController.Instance.CameraShakeEffect)
+            StartCoroutine(Shake(intensity));
     }
     public IEnumerator Shake(float intensity = 1)
     {

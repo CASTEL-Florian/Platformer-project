@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class GameplayManager : MonoBehaviour
@@ -10,6 +9,7 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private GameObject gameFirstSelected;
     [SerializeField] private Bounds winZone;
     [SerializeField] private LayerMask playerMask;
+    [SerializeField] [Min(0)] private float gameOverWaitTime;
 
     public static GameplayManager Instance;
 
@@ -39,10 +39,15 @@ public class GameplayManager : MonoBehaviour
     {
         if (!gameOverMenu.activeSelf)
         {
-            Time.timeScale = 0;
-            gameOverMenu.SetActive(true);
-            EventSystem.current.SetSelectedGameObject(gameFirstSelected);
+            Invoke("ShowGameOver", gameOverWaitTime);
         }
+    }
+
+    private void ShowGameOver()
+    {
+        Time.timeScale = 0;
+        gameOverMenu.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(gameFirstSelected);
     }
 
     /*private void OnDrawGizmos()

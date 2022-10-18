@@ -20,7 +20,7 @@ public class PauseMenu : MonoBehaviour
         inputs.Menus.Echap.performed -= ctx => Pause();
         inputs.Menus.Disable();
     }
-    
+
     public void Pause()
     {
         if (pauseMenu.activeSelf)

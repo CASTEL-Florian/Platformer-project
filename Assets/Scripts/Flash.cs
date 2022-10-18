@@ -28,7 +28,9 @@ public class Flash : MonoBehaviour
         {
             StopCoroutine(flashRoutine);
         }
-        flashRoutine = StartCoroutine(FlashRoutine());
+        
+        if(FeedbackController.Instance.HitEffect)
+            flashRoutine = StartCoroutine(FlashRoutine());
     }
 
     private IEnumerator FlashRoutine()

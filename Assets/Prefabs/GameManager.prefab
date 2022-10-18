@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5808649667917242760}
   - component: {fileID: 5808649667917242762}
-  - component: {fileID: 5808649667917242767}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -47,30 +46,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fader: {fileID: 0}
   fadeInOnStart: 1
---- !u!114 &5808649667917242767
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5808649667917242766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 647643b556662a5439ca733fe2cfb3a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  allToggle: {fileID: 0}
-  runEffectToggle: {fileID: 0}
-  runEffectOnTurnBoostToggle: {fileID: 0}
-  runEffectOnGroundOnlyToggle: {fileID: 0}
-  doubleJumpEffectToggle: {fileID: 0}
-  wallSlideEffectToggle: {fileID: 0}
-  dashEffectToggle: {fileID: 0}
-  deformPlayerEffectToggle: {fileID: 0}
-  runEffect: 1
-  runEffectOnTurnBoost: 0
-  runEffectOnGroundOnly: 1
-  doubleJumpEffect: 1
-  wallSlideEffect: 1
-  dashEffect: 1
-  deformPlayerEffect: 1

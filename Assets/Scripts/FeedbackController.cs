@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.UI;
 using Toggle = UnityEngine.UI.Toggle;
@@ -16,6 +17,10 @@ public class FeedbackController : MonoBehaviour
     [SerializeField] private Toggle dashEffectToggle;
     [SerializeField] private Toggle deformPlayerEffectToggle;
     [SerializeField] private Toggle trampolineBounceEffectToggle;
+    [SerializeField] private Toggle hitEffectToggle;
+    [SerializeField] private Toggle dieEffectToggle;
+    [SerializeField] private Toggle vibrationsEffectToggle;
+    [SerializeField] private Toggle cameraShakeEffectToggle;
 
     [field: Header("Pre-selected")]
     [field: Space]
@@ -27,6 +32,10 @@ public class FeedbackController : MonoBehaviour
     [SerializeField] private bool dashEffect = true;
     [SerializeField] private bool deformPlayerEffect = true;
     [SerializeField] private bool trampolineBounceEffect = true;
+    [SerializeField] private bool hitEffect = true;
+    [SerializeField] private bool dieEffect = true;
+    [SerializeField] private bool vibrationsEffect = true;
+    [SerializeField] private bool cameraShakeEffect = true;
 
     public bool EmitRunEffect
     {
@@ -72,6 +81,30 @@ public class FeedbackController : MonoBehaviour
         private set { }
     }
 
+    public bool HitEffect
+    {
+        get => hitEffectToggle.isOn;
+        private set { }
+    }
+
+    public bool DieEffect
+    {
+        get => dieEffectToggle.isOn;
+        private set { }
+    }
+
+    public bool VibrationsEffect
+    {
+        get => vibrationsEffectToggle.isOn;
+        private set { }
+    }
+
+    public bool CameraShakeEffect
+    {
+        get => cameraShakeEffectToggle.isOn;
+        private set { }
+    }
+
     public static FeedbackController Instance;
 
     private void Awake()
@@ -87,6 +120,10 @@ public class FeedbackController : MonoBehaviour
         dashEffectToggle.SetIsOnWithoutNotify(dashEffect);
         deformPlayerEffectToggle.SetIsOnWithoutNotify(deformPlayerEffect);
         trampolineBounceEffectToggle.SetIsOnWithoutNotify(trampolineBounceEffect);
+        hitEffectToggle.SetIsOnWithoutNotify(hitEffect);
+        dieEffectToggle.SetIsOnWithoutNotify(dieEffect);
+        vibrationsEffectToggle.SetIsOnWithoutNotify(vibrationsEffect);
+        cameraShakeEffectToggle.SetIsOnWithoutNotify(cameraShakeEffect);
         UpdateAllToggle();
     }
 
@@ -99,7 +136,11 @@ public class FeedbackController : MonoBehaviour
                                        dashEffectToggle.isOn &&
                                        runEffectOnGroundOnlyToggle.isOn &&
                                        deformPlayerEffectToggle.isOn &&
-                                       trampolineBounceEffectToggle.isOn);
+                                       trampolineBounceEffectToggle.isOn &&
+                                       hitEffectToggle.isOn &&
+                                       dieEffectToggle.isOn &&
+                                       vibrationsEffectToggle.isOn &&
+                                       cameraShakeEffectToggle.isOn);
     }
 
     public void OnEmitAll()
@@ -112,5 +153,9 @@ public class FeedbackController : MonoBehaviour
         dashEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
         deformPlayerEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
         trampolineBounceEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
+        hitEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
+        dieEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
+        vibrationsEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
+        cameraShakeEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
     }
 }

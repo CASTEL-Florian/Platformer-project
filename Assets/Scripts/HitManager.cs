@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HitManager : MonoBehaviour
@@ -23,6 +22,7 @@ public class HitManager : MonoBehaviour
         if (value > 0 && gameObject.activeSelf)
         {
             StartCoroutine(SetInvisible(invinsibilityTime));
+            GamepadVibrations.Instance.OnHit();
         }
     }
 
@@ -32,5 +32,4 @@ public class HitManager : MonoBehaviour
         yield return new WaitForSeconds(duration);
         isInvinsible = false;
     }
-
 }
