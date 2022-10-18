@@ -28,6 +28,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpVelocity;
     [SerializeField] private float airJumpVelocity = 5;
     [SerializeField] private Vector2 wallJumpVelocity;
+    [SerializeField] private float wallJumpDuration;
+    [SerializeField] private float onWallDelay;
     [SerializeField] private float jumpReleaseMultiplier = 2f;
     [SerializeField] private float bufferJumpMaxAllowedTime = .2f;
     [SerializeField] private bool airControl = true;
@@ -43,6 +45,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private BoxCollider2D wallCheck;
     [SerializeField] private float maxFallingSpeedOnWalls = 2f;
     [SerializeField] private float maxSlopeAngle = 45;
+    [SerializeField] private float platformGoDownDirectionThreshold = -0.5f;
+    [SerializeField] private float platformGoDownMinimumPressTime = .2f;
     
     [Header("Autre")]
     [Space]
@@ -75,6 +79,7 @@ public class PlayerController : MonoBehaviour
     private int groundObjectId;
     private bool grounded = false;
     private bool onWall = false;
+    private bool isWallOnTheRight = true;
     private bool wasGroundedLastFrame = false;
     
     private int currentAirJumpCount;
@@ -82,10 +87,15 @@ public class PlayerController : MonoBehaviour
     private bool jumpButtonHeld;
     private bool jumpCancellable = false;
     private float bufferedJumpTime = 0f;
+
+    private float onWallDelayStopTime = 0f;
+    private float wallJumpStopTime = 0f;
     
     private bool sprinting = false;
     
     private float turnBoostStopTime = 0f;
+    
+    private float platformGoDownTimePressed = 0f;
     
     private float dashDirection = 0f;
     private float dashStopTime = 0f;
@@ -116,6 +126,8 @@ public class PlayerController : MonoBehaviour
         {
             velocity.y = trampolineBounceVelocity;
             hasBounced = true;
+            if (FeedbackController.Instance.DeformPlayerEffect)
+                animator.SetTrigger("jump");
         }
         else if (!IsDashing())
         {
@@ -126,10 +138,11 @@ public class PlayerController : MonoBehaviour
                 if (grounded || !fixedAirJumpHeight)
                     jumpCancellable = true;
                 jump = false;
-                if (onWall)
+                if (onWall || isOnWallDelayActive())
                 {
                     velocity = wallJumpVelocity;
-                    if (transform.localScale.x > 0)
+                    wallJumpStopTime = Time.time + wallJumpDuration;
+                    if (isWallOnTheRight)
                         velocity.x = -velocity.x;
                 }
                 else
@@ -146,6 +159,11 @@ public class PlayerController : MonoBehaviour
                 jumpCancellable = false;
             }
         }
+        
+        if (grounded && moveDirection.y < platformGoDownDirectionThreshold)
+            platformGoDownTimePressed += Time.deltaTime;
+        else
+            platformGoDownTimePressed = 0f;
 
         float accelerationScale;
         float decelerationScale;
@@ -171,7 +189,7 @@ public class PlayerController : MonoBehaviour
         float accelerationSpeed = (sprinting ? sprintAcceleration : acceleration) * accelerationScale;
         float decelerationSpeed = deceleration * decelerationScale;
         float maxSpeedX = sprinting ? sprintMaxVelocityX : maxVelocityX;
-        if (airControl || grounded)
+        if ((airControl || grounded) && !IsWallJumpActive())
             velocity.x += moveDirection.x * accelerationSpeed * Time.fixedDeltaTime;
 
         if (IsTurnBoostActive())
@@ -251,7 +269,9 @@ public class PlayerController : MonoBehaviour
                 onTrampoline = colliders[i].CompareTag("Trampoline") || onTrampoline;
                 onIce = colliders[i].CompareTag("Ice");
 
-
+                if(colliders[i].CompareTag("Trampoline") && FeedbackController.Instance.TrampolineBounceEffect)
+                    colliders[i].GetComponent<Trampoline>().Animate();
+                
                 grounded = true;
                 hasBounced = false;
 
@@ -283,14 +303,17 @@ public class PlayerController : MonoBehaviour
     private void WallCheck()
     {
         onWall = false;
-        if (velocity.x * moveDirection.x <= 0)
+        if (moveDirection.x == 0)
             return;
+
         Collider2D[] colliders = Physics2D.OverlapBoxAll(wallCheck.transform.position, wallCheck.size, 0, whatIsWall);
         for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].gameObject != gameObject)
             {
                 onWall = true;
+                isWallOnTheRight = transform.localScale.x > 0;
+                onWallDelayStopTime = Time.time + onWallDelay;
                 if (Time.time < bufferedJumpTime)
                     jump = true;
             }
@@ -332,7 +355,10 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.gameObject.layer == LayerMask.NameToLayer("Plateform"))
                 {
-                    if (!grounded && lastPosition.y - transform.position.y + boxCollider.bounds.min.y < hit.bounds.max.y || velocity.y > 0 || moveDirection.y < 0)
+                    Debug.Log(platformGoDownTimePressed);
+                    if ((!grounded && lastPosition.y - transform.position.y + boxCollider.bounds.min.y <
+                        hit.bounds.max.y) || velocity.y > 0 ||
+                        platformGoDownTimePressed >= platformGoDownMinimumPressTime)
                         continue;
                 }
                 Vector2 translation = colliderDistance.pointA - colliderDistance.pointB;
@@ -395,6 +421,16 @@ public class PlayerController : MonoBehaviour
     private bool IsDashing()
     {
         return Time.time < dashStopTime;
+    }
+    
+    private bool IsWallJumpActive()
+    {
+        return Time.time < wallJumpStopTime;
+    }
+
+    private bool isOnWallDelayActive()
+    {
+        return Time.time < onWallDelayStopTime;
     }
     
     private bool CanDash()

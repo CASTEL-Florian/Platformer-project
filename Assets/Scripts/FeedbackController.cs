@@ -15,6 +15,7 @@ public class FeedbackController : MonoBehaviour
     [SerializeField] private Toggle wallSlideEffectToggle;
     [SerializeField] private Toggle dashEffectToggle;
     [SerializeField] private Toggle deformPlayerEffectToggle;
+    [SerializeField] private Toggle trampolineBounceEffectToggle;
 
     [field: Header("Pre-selected")]
     [field: Space]
@@ -25,6 +26,7 @@ public class FeedbackController : MonoBehaviour
     [SerializeField] private bool wallSlideEffect = true;
     [SerializeField] private bool dashEffect = true;
     [SerializeField] private bool deformPlayerEffect = true;
+    [SerializeField] private bool trampolineBounceEffect = true;
 
     public bool EmitRunEffect
     {
@@ -64,6 +66,12 @@ public class FeedbackController : MonoBehaviour
         private set { }
     }
 
+    public bool TrampolineBounceEffect
+    {
+        get => trampolineBounceEffectToggle.isOn;
+        private set { }
+    }
+
     public static FeedbackController Instance;
 
     private void Awake()
@@ -78,6 +86,7 @@ public class FeedbackController : MonoBehaviour
         wallSlideEffectToggle.SetIsOnWithoutNotify(wallSlideEffect);
         dashEffectToggle.SetIsOnWithoutNotify(dashEffect);
         deformPlayerEffectToggle.SetIsOnWithoutNotify(deformPlayerEffect);
+        trampolineBounceEffectToggle.SetIsOnWithoutNotify(trampolineBounceEffect);
         UpdateAllToggle();
     }
 
@@ -89,7 +98,8 @@ public class FeedbackController : MonoBehaviour
                                        wallSlideEffectToggle.isOn &&
                                        dashEffectToggle.isOn &&
                                        runEffectOnGroundOnlyToggle.isOn &&
-                                       deformPlayerEffectToggle.isOn);
+                                       deformPlayerEffectToggle.isOn &&
+                                       trampolineBounceEffectToggle.isOn);
     }
 
     public void OnEmitAll()
@@ -101,5 +111,6 @@ public class FeedbackController : MonoBehaviour
         wallSlideEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
         dashEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
         deformPlayerEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
+        trampolineBounceEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
     }
 }

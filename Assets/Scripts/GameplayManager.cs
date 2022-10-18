@@ -27,14 +27,22 @@ public class GameplayManager : MonoBehaviour
 
     public void Win()
     {
-        winMenu.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(winFirstSelected);
+        if (!winMenu.activeSelf)
+        {
+            Time.timeScale = 0;
+            winMenu.SetActive(true);
+            EventSystem.current.SetSelectedGameObject(winFirstSelected);
+        }
     }
     
     public void GameOver()
     {
-        gameOverMenu.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(gameFirstSelected);
+        if (!gameOverMenu.activeSelf)
+        {
+            Time.timeScale = 0;
+            gameOverMenu.SetActive(true);
+            EventSystem.current.SetSelectedGameObject(gameFirstSelected);
+        }
     }
 
     /*private void OnDrawGizmos()
