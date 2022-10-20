@@ -146,7 +146,7 @@ public class PlayerController : MonoBehaviour
                     velocity.y = grounded ? jumpVelocity : airJumpVelocity;
                 }
 
-                if ((!grounded || slopeAngle > maxSlopeAngle) && !onWall && FeedbackController.Instance.EmitDoubleJumpEffect)
+                if ((!grounded || slopeAngle > maxSlopeAngle) && !onWall && !isOnWallDelayActive() && FeedbackController.Instance.EmitDoubleJumpEffect)
                     Instantiate(doubleJumpParticles, groundCheck.transform.position, Quaternion.identity);
             }
             if (velocity.y > 0 && !jumpButtonHeld && jumpCancellable)
@@ -318,7 +318,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if ((grounded || onWall || (timeSinceLeftGround < coyoteTimeThreshold && velocity.y <= 0)) && slopeAngle < maxSlopeAngle)
+        if ((grounded || onWall || (timeSinceLeftGround < coyoteTimeThreshold && velocity.y <= 0) || isOnWallDelayActive()) && slopeAngle < maxSlopeAngle)
         {
             jump = true;
             timeSinceLeftGround = coyoteTimeThreshold;
