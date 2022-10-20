@@ -68,16 +68,16 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Xbox controls:
 
-    left stick:move
+    left stick: move
 
-    right trigger:Sprint
+    right trigger: Sprint
 
     left
-    trigger:dash
+    trigger: dash
 
-    A:jump
+    A: jump
 
-    start:pause'
+    start: pause'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -537,15 +537,16 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Keyboard:
 
-    ZQSD/WASD/arrow:move
+    ZQSD/WASD/arrow: move
 
-    shift:Sprint
+    shift: Sprint
 
-    ctrl:dash
+    ctrl: dash
 
-    space:jump
+    space:
+    jump
 
-    escape:pause'
+    escape: pause'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
