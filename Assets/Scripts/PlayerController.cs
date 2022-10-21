@@ -370,7 +370,6 @@ public class PlayerController : MonoBehaviour
                         translation.y = 0;
                     }
                 }
-                        print(translation);
                 transform.Translate(translation);
                 if (Mathf.Abs(translation.x) >= 0.01f)
                 {
