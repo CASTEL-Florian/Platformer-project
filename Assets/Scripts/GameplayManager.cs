@@ -50,9 +50,9 @@ public class GameplayManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(gameFirstSelected);
     }
 
-    /*private void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
         Gizmos.DrawCube(winZone.center, winZone.extents);
-    }*/
+    }
 }
