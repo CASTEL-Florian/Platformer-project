@@ -204,7 +204,7 @@ public class PlayerController : MonoBehaviour
         WallCheck();
         velocity.y -= gravity * Time.fixedDeltaTime;
 
-        if (onWall)
+        if (onWall && !IsDashing() && !grounded)
         {
             velocity.y = Mathf.Clamp(velocity.y, -maxFallingSpeedOnWalls, maxVelocityY);
             

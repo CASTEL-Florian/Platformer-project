@@ -5321,7 +5321,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Block
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 3900643149170825807, guid: afb76f27c2ff0674092032e4e6f1ba57, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3900643149170825807, guid: afb76f27c2ff0674092032e4e6f1ba57, type: 3}
+      propertyPath: m_TagString
+      value: Slope
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 7590679651647754192, guid: afb76f27c2ff0674092032e4e6f1ba57, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: afb76f27c2ff0674092032e4e6f1ba57, type: 3}
 --- !u!1 &1246379640
 GameObject:
