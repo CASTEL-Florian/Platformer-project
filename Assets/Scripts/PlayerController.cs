@@ -146,7 +146,7 @@ public class PlayerController : MonoBehaviour
                     velocity.y = grounded ? jumpVelocity : airJumpVelocity;
                 }
 
-                if ((!grounded || slopeAngle > maxSlopeAngle) && !onWall && !isOnWallDelayActive() && FeedbackController.Instance.EmitDoubleJumpEffect)
+                if ((!grounded || Mathf.Abs(slopeAngle) > maxSlopeAngle) && !onWall && !isOnWallDelayActive() && FeedbackController.Instance.EmitDoubleJumpEffect)
                     Instantiate(doubleJumpParticles, groundCheck.transform.position, Quaternion.identity);
             }
             if (velocity.y > 0 && !jumpButtonHeld && jumpCancellable)
@@ -286,7 +286,7 @@ public class PlayerController : MonoBehaviour
                     transform.Translate(colliders[i].transform.position - (Vector3)groundPosition);
                 groundObjectId = colliders[i].GetInstanceID();
                 groundPosition = colliders[i].transform.position;
-                if (slopeAngle < maxSlopeAngle)
+                if (Mathf.Abs(slopeAngle) < maxSlopeAngle)
                     currentAirJumpCount = 0;
             }
         }
@@ -318,7 +318,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if ((grounded || onWall || (timeSinceLeftGround < coyoteTimeThreshold && velocity.y <= 0) || isOnWallDelayActive()) && slopeAngle < maxSlopeAngle)
+        if ((grounded || onWall || (timeSinceLeftGround < coyoteTimeThreshold && velocity.y <= 0) || isOnWallDelayActive()) && Mathf.Abs(slopeAngle) < maxSlopeAngle)
         {
             jump = true;
             timeSinceLeftGround = coyoteTimeThreshold;
@@ -359,7 +359,7 @@ public class PlayerController : MonoBehaviour
                 Vector2 translation = colliderDistance.pointA - colliderDistance.pointB;
                 if (hit.gameObject.layer == LayerMask.NameToLayer("Slope"))
                 {
-                    if (slopeAngle < maxSlopeAngle)
+                    if (Mathf.Abs(slopeAngle) < maxSlopeAngle)
                     {
                         translation.y = Mathf.Abs(slopeAngle) < 0.01 ? translation.y : Mathf.Abs(translation.magnitude / Mathf.Cos(Mathf.Deg2Rad*slopeAngle));
                         translation.x = 0;
@@ -379,7 +379,7 @@ public class PlayerController : MonoBehaviour
                 {
                     velocity.y = 0;
                 }
-                if (!wasGroundedLastFrame && slopeAngle < maxSlopeAngle && grounded && FeedbackController.Instance.DeformPlayerEffect)
+                if (!wasGroundedLastFrame && Mathf.Abs(slopeAngle) < maxSlopeAngle && grounded && FeedbackController.Instance.DeformPlayerEffect)
                     animator.SetTrigger("land");
             }
         }
