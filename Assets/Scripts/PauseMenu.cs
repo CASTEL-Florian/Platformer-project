@@ -9,6 +9,8 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private GameObject settingsFirstSelected;
     [SerializeField] private GameObject controlMenu;
     [SerializeField] private GameObject controlFirstSelected;
+    [SerializeField] private GameObject controlMenu2;
+    [SerializeField] private GameObject control2FirstSelected;
 
 
     private InputSettings inputs;
@@ -17,10 +19,12 @@ public class PauseMenu : MonoBehaviour
         inputs = new InputSettings();
         inputs.Menus.Enable();
         inputs.Menus.Echap.performed += ctx => Pause();
+        inputs.Menus.Back.performed += ctx => Back();
     }
     
     private void OnDisable(){
         inputs.Menus.Echap.performed -= ctx => Pause();
+        inputs.Menus.Back.performed -= ctx => Back();
         inputs.Menus.Disable();
     }
 
@@ -37,6 +41,8 @@ public class PauseMenu : MonoBehaviour
                 settingsMenu.SetActive(false);
             else if (controlMenu.activeSelf)
                 controlMenu.SetActive(false);
+            else if (controlMenu2.activeSelf)
+                controlMenu2.SetActive(false);
             else
                 Time.timeScale = 0;
             pauseMenu.SetActive(true);
@@ -56,5 +62,46 @@ public class PauseMenu : MonoBehaviour
         pauseMenu.SetActive(false);
         controlMenu.SetActive(true);
         EventSystem.current.SetSelectedGameObject(controlFirstSelected);
+    }
+
+    public void Back()
+    {
+        if (settingsMenu.activeSelf)
+        {
+            settingsMenu.SetActive(false);
+            pauseMenu.SetActive(true);
+            EventSystem.current.SetSelectedGameObject(pauseFirstSelected);
+        } else if (controlMenu.activeSelf)
+        {
+            controlMenu.SetActive(false);
+            pauseMenu.SetActive(true);
+            EventSystem.current.SetSelectedGameObject(pauseFirstSelected);
+        } else if (controlMenu2.activeSelf)
+        {
+            controlMenu2.SetActive(false);
+            pauseMenu.SetActive(true);
+            EventSystem.current.SetSelectedGameObject(pauseFirstSelected);
+        }
+        else if(pauseMenu.activeSelf)
+        {
+            pauseMenu.SetActive(false);
+            Time.timeScale = 1;
+        }
+    }
+
+    public void SwitchControlsMenu()
+    {
+        if (controlMenu.activeSelf)
+        {
+            controlMenu.SetActive(false);
+            controlMenu2.SetActive(true);
+            EventSystem.current.SetSelectedGameObject(control2FirstSelected);
+        }
+        else
+        {
+            controlMenu.SetActive(true);
+            controlMenu2.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(controlFirstSelected);
+        }
     }
 }

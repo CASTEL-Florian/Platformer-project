@@ -122,6 +122,7 @@ public class PlayerController : MonoBehaviour
         {
             velocity.y = trampolineBounceVelocity;
             hasBounced = true;
+            dashStopTime = 0;
             if (FeedbackController.Instance.DeformPlayerEffect)
                 animator.SetTrigger("jump");
         }

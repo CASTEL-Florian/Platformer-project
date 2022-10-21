@@ -421,6 +421,15 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Back"",
+                    ""type"": ""Button"",
+                    ""id"": ""76b95c5e-13c7-44d6-ae26-c971867b948a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -536,28 +545,6 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""ddcbf4e1-28b5-4835-8818-0d9e805ff484"",
-                    ""path"": ""<XInputController>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Echap"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""7d1cbaee-174b-41a0-9a32-9ecb92330b7b"",
-                    ""path"": ""<DualShockGamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Echap"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""730d99c4-ed1f-4a52-8b08-2845226c2c7c"",
                     ""path"": ""<XInputController>/leftStick/right"",
                     ""interactions"": """",
@@ -621,6 +608,39 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
                     ""action"": ""MenuLeft"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a4516caf-87d1-4050-b61e-46e7e31de858"",
+                    ""path"": ""<XInputController>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7acd88bd-0dca-47f8-810f-4e80ffab0941"",
+                    ""path"": ""<DualShockGamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c227ce09-0972-4b81-90bd-9c6404292189"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -641,6 +661,7 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
         m_Menus_MenuLeft = m_Menus.FindAction("MenuLeft", throwIfNotFound: true);
         m_Menus_MenuSelect = m_Menus.FindAction("MenuSelect", throwIfNotFound: true);
         m_Menus_Echap = m_Menus.FindAction("Echap", throwIfNotFound: true);
+        m_Menus_Back = m_Menus.FindAction("Back", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -763,6 +784,7 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
     private readonly InputAction m_Menus_MenuLeft;
     private readonly InputAction m_Menus_MenuSelect;
     private readonly InputAction m_Menus_Echap;
+    private readonly InputAction m_Menus_Back;
     public struct MenusActions
     {
         private @InputSettings m_Wrapper;
@@ -773,6 +795,7 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
         public InputAction @MenuLeft => m_Wrapper.m_Menus_MenuLeft;
         public InputAction @MenuSelect => m_Wrapper.m_Menus_MenuSelect;
         public InputAction @Echap => m_Wrapper.m_Menus_Echap;
+        public InputAction @Back => m_Wrapper.m_Menus_Back;
         public InputActionMap Get() { return m_Wrapper.m_Menus; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -800,6 +823,9 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
                 @Echap.started -= m_Wrapper.m_MenusActionsCallbackInterface.OnEchap;
                 @Echap.performed -= m_Wrapper.m_MenusActionsCallbackInterface.OnEchap;
                 @Echap.canceled -= m_Wrapper.m_MenusActionsCallbackInterface.OnEchap;
+                @Back.started -= m_Wrapper.m_MenusActionsCallbackInterface.OnBack;
+                @Back.performed -= m_Wrapper.m_MenusActionsCallbackInterface.OnBack;
+                @Back.canceled -= m_Wrapper.m_MenusActionsCallbackInterface.OnBack;
             }
             m_Wrapper.m_MenusActionsCallbackInterface = instance;
             if (instance != null)
@@ -822,6 +848,9 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
                 @Echap.started += instance.OnEchap;
                 @Echap.performed += instance.OnEchap;
                 @Echap.canceled += instance.OnEchap;
+                @Back.started += instance.OnBack;
+                @Back.performed += instance.OnBack;
+                @Back.canceled += instance.OnBack;
             }
         }
     }
@@ -841,5 +870,6 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
         void OnMenuLeft(InputAction.CallbackContext context);
         void OnMenuSelect(InputAction.CallbackContext context);
         void OnEchap(InputAction.CallbackContext context);
+        void OnBack(InputAction.CallbackContext context);
     }
 }
