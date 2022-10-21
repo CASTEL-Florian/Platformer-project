@@ -135,7 +135,7 @@ public class PlayerController : MonoBehaviour
                 if (grounded || !fixedAirJumpHeight)
                     jumpCancellable = true;
                 jump = false;
-                if (onWall || isOnWallDelayActive())
+                if ((onWall || isOnWallDelayActive()) && !grounded)
                 {
                     velocity = wallJumpVelocity;
                     wallJumpStopTime = Time.time + wallJumpDuration;
@@ -192,7 +192,7 @@ public class PlayerController : MonoBehaviour
         if (IsTurnBoostActive())
             velocity.x += moveDirection.x * Mathf.Abs(velocity.x) * turnBoostFactor * Time.fixedDeltaTime;
 
-        if (!IsDashing() && (grounded || !FeedbackController.Instance.EmitRunEffectOnGroundOnly) &&
+        if (!IsDashing() && velocity.x != 0 && (grounded || !FeedbackController.Instance.EmitRunEffectOnGroundOnly) &&
             ((IsTurnBoostActive() && FeedbackController.Instance.EmitRunEffectOnTurnBoost) || 
             (sprinting && FeedbackController.Instance.EmitRunEffect)))
         {
@@ -271,6 +271,10 @@ public class PlayerController : MonoBehaviour
                 
                 grounded = true;
                 hasBounced = false;
+
+                SpriteRenderer colliderSprite = colliders[i].GetComponent<SpriteRenderer>();
+                ParticleSystem.MainModule particle = runParticles.main;
+                particle.startColor = colliderSprite != null ? colliderSprite.color : Color.white;
 
                 if (!wasGrounded)
                     GamepadVibrations.Instance.OnLand();

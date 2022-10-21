@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.6328218, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -255,6 +255,8 @@ MonoBehaviour:
   jumpVelocity: 10
   airJumpVelocity: 8
   wallJumpVelocity: {x: 5, y: 10}
+  wallJumpDuration: 0
+  onWallDelay: 0
   jumpReleaseMultiplier: 2
   bufferJumpMaxAllowedTime: 0.2
   airControl: 1
@@ -271,6 +273,8 @@ MonoBehaviour:
   wallCheck: {fileID: 1223250512267760923}
   maxFallingSpeedOnWalls: 2
   maxSlopeAngle: 45
+  platformGoDownDirectionThreshold: -0.5
+  platformGoDownMinimumPressTime: 0.2
   groundAccelerationScale: 1
   groundDecelerationScale: 1
   iceAccelerationScale: 0.5
@@ -282,10 +286,6 @@ MonoBehaviour:
   runParticles: {fileID: 4304402885649461124}
   wallSlideParticles: {fileID: 8014108323006871484}
   dashTrail: {fileID: 1128026736185078506}
-  onLandVibrationIntensity: 0.005
-  onLandVibrationDuration: 0.1
-  onHitVibrationIntensity: 0.1
-  onHitVibrationDuration: 0.5
   animator: {fileID: 437256865513870028}
 --- !u!114 &-5069206277376527519
 MonoBehaviour:
