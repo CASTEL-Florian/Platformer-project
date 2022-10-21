@@ -361,15 +361,16 @@ public class PlayerController : MonoBehaviour
                 {
                     if (slopeAngle < maxSlopeAngle)
                     {
-                        translation.y = Mathf.Abs(translation.x) < 0.01 ? translation.y : Mathf.Abs(translation.magnitude / Mathf.Sin(Mathf.Atan(translation.y / translation.x)));
+                        translation.y = Mathf.Abs(slopeAngle) < 0.01 ? translation.y : Mathf.Abs(translation.magnitude / Mathf.Cos(Mathf.Deg2Rad*slopeAngle));
                         translation.x = 0;
                     }
                     else
                     {
+                        translation.x = Mathf.Abs(translation.y) < 0.01 ? translation.x : Mathf.Sign(translation.x) * Mathf.Abs(translation.magnitude / Mathf.Sin(Mathf.Deg2Rad * slopeAngle));
                         translation.y = 0;
-                        translation.x = Mathf.Abs(translation.y) < 0.01 ? translation.x : Mathf.Abs(translation.magnitude / Mathf.Sin(Mathf.Atan(translation.x / translation.y)));
                     }
                 }
+                        print(translation);
                 transform.Translate(translation);
                 if (Mathf.Abs(translation.x) >= 0.01f)
                 {
