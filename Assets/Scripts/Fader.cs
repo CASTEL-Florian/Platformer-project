@@ -60,12 +60,8 @@ public class Fader : MonoBehaviour
     }
     private IEnumerator TransitionRoutine(int sceneIndex)
     {
-        if (!transitioning)
-        {
-            transitioning = true;
-            yield return FadeOutRoutine(fadeOutTime);
-            Time.timeScale = 1;
-            SceneManager.LoadScene(sceneIndex);
-        }
+        yield return FadeOutRoutine(fadeOutTime);
+        Time.timeScale = 1;
+        SceneManager.LoadScene(sceneIndex);
     }
 }
