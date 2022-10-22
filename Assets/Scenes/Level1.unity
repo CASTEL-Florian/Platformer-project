@@ -3953,8 +3953,20 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7808410392803471890, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
+      propertyPath: airSprintControl
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7808410392803471890, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
       propertyPath: wallJumpDuration
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7808410392803471890, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
+      propertyPath: sprintAcceleration
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7808410392803471890, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
+      propertyPath: sprintMaxVelocityX
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7808410392803471890, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
       propertyPath: wallJumpVelocity.x
@@ -4186,12 +4198,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 938427822}
   settingsMenu: {fileID: 109507702}
+  controlMenu: {fileID: 999779370}
+  controlMenu2: {fileID: 1867072502}
   pauseFirstSelected: {fileID: 1197468942}
   settingsFirstSelected: {fileID: 985530162}
-  controlMenu: {fileID: 999779370}
   controlFirstSelected: {fileID: 428943422}
-  controlMenu2: {fileID: 1867072502}
   control2FirstSelected: {fileID: 1513448073}
+  settingsButton: {fileID: 802481627}
+  controlsButton: {fileID: 795420977}
 --- !u!4 &538946078
 Transform:
   m_ObjectHideFlags: 0
@@ -4205,7 +4219,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &555807117 stripped
 MonoBehaviour:
@@ -15768,7 +15782,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5108916195432482416, guid: 48d1a88febae7fc48bbb4f38267244da, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5108916195432482416, guid: 48d1a88febae7fc48bbb4f38267244da, type: 3}
       propertyPath: m_AnchorMax.x
