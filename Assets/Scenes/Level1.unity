@@ -3966,7 +3966,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7808410392803471890, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
       propertyPath: sprintMaxVelocityX
-      value: 10
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7808410392803471890, guid: 87b5f54863378cc458fac4ae7ee19602, type: 3}
       propertyPath: wallJumpVelocity.x
