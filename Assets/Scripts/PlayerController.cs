@@ -325,7 +325,8 @@ public class PlayerController : MonoBehaviour
             {
                 onWall = true;
                 isWallOnTheRight = transform.localScale.x > 0;
-                onWallDelayStopTime = Time.time + onWallDelay;
+                if (!IsDashing())
+                    onWallDelayStopTime = Time.time + onWallDelay;
                 if (Time.time < bufferedJumpTime)
                     jump = true;
             }
@@ -459,5 +460,11 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 scale = transform.localScale;
         transform.localScale = new Vector3(scale.x * -1, scale.y, scale.z);
+    }
+
+    private void OnDisable()
+    {
+        runParticles.Stop();
+        wallSlideParticles.Stop();
     }
 }
