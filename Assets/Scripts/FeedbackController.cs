@@ -112,25 +112,52 @@ public class FeedbackController : MonoBehaviour
     {
         Debug.Assert(Instance == null);
         Instance = this;
-        Invoke("SetToggles", .05f);
+        Invoke("InitToggles", .05f);
     }
 
-    private void SetToggles()
+    private void InitToggles()
     {
-        runEffectToggle.SetIsOnWithoutNotify(runEffect);
-        runEffectOnTurnBoostToggle.SetIsOnWithoutNotify(runEffectOnTurnBoost);
-        runEffectOnGroundOnlyToggle.SetIsOnWithoutNotify(runEffectOnGroundOnly);
-        doubleJumpEffectToggle.SetIsOnWithoutNotify(doubleJumpEffect);
-        wallSlideEffectToggle.SetIsOnWithoutNotify(wallSlideEffect);
-        dashEffectToggle.SetIsOnWithoutNotify(dashEffect);
-        deformPlayerEffectToggle.SetIsOnWithoutNotify(deformPlayerEffect);
-        trampolineBounceEffectToggle.SetIsOnWithoutNotify(trampolineBounceEffect);
-        hitEffectToggle.SetIsOnWithoutNotify(hitEffect);
-        dieEffectToggle.SetIsOnWithoutNotify(dieEffect);
-        vibrationsEffectToggle.SetIsOnWithoutNotify(vibrationsEffect);
-        cameraShakeEffectToggle.SetIsOnWithoutNotify(cameraShakeEffect);
+        runEffectToggle.SetIsOnWithoutNotify(GetPref("runEffectToggle", runEffect));
+        runEffectOnTurnBoostToggle.SetIsOnWithoutNotify(GetPref("runEffectOnTurnBoostToggle", runEffectOnTurnBoost));
+        runEffectOnGroundOnlyToggle.SetIsOnWithoutNotify(GetPref("runEffectOnGroundOnlyToggle", runEffectOnGroundOnly));
+        doubleJumpEffectToggle.SetIsOnWithoutNotify(GetPref("doubleJumpEffectToggle", doubleJumpEffect));
+        wallSlideEffectToggle.SetIsOnWithoutNotify(GetPref("wallSlideEffectToggle", wallSlideEffect));
+        dashEffectToggle.SetIsOnWithoutNotify(GetPref("dashEffectToggle", dashEffect));
+        deformPlayerEffectToggle.SetIsOnWithoutNotify(GetPref("deformPlayerEffectToggle", deformPlayerEffect));
+        trampolineBounceEffectToggle.SetIsOnWithoutNotify(GetPref("trampolineBounceEffectToggle", trampolineBounceEffect));
+        hitEffectToggle.SetIsOnWithoutNotify(GetPref("hitEffectToggle", hitEffect));
+        dieEffectToggle.SetIsOnWithoutNotify(GetPref("dieEffectToggle", dieEffect));
+        vibrationsEffectToggle.SetIsOnWithoutNotify(GetPref("vibrationsEffectToggle", vibrationsEffect));
+        cameraShakeEffectToggle.SetIsOnWithoutNotify(GetPref("cameraShakeEffectToggle", cameraShakeEffect));
         UpdateAllToggle();
         allowEmitAll = true;
+    }
+
+    private void SaveToggles()
+    {
+        SetPref("runEffectToggle", runEffectToggle.isOn);
+        SetPref("runEffectOnTurnBoostToggle", runEffectOnTurnBoostToggle.isOn);
+        SetPref("runEffectOnGroundOnlyToggle", runEffectOnGroundOnlyToggle.isOn);
+        SetPref("doubleJumpEffectToggle", doubleJumpEffectToggle.isOn);
+        SetPref("wallSlideEffectToggle", wallSlideEffectToggle.isOn);
+        SetPref("dashEffectToggle", dashEffectToggle.isOn);
+        SetPref("deformPlayerEffectToggle", deformPlayerEffectToggle.isOn);
+        SetPref("trampolineBounceEffectToggle", trampolineBounceEffectToggle.isOn);
+        SetPref("hitEffectToggle", hitEffectToggle.isOn);
+        SetPref("dieEffectToggle", dieEffectToggle.isOn);
+        SetPref("vibrationsEffectToggle", vibrationsEffectToggle.isOn);
+        SetPref("cameraShakeEffectToggle", cameraShakeEffectToggle.isOn);
+        PlayerPrefs.Save();
+    }
+
+    private bool GetPref(string key, bool placeholder)
+    {
+        return PlayerPrefs.HasKey(key) ? (PlayerPrefs.GetInt(key) > 0) : placeholder;
+    }
+
+    private void SetPref(string key, bool value)
+    {
+        PlayerPrefs.SetInt(key, value ? 1 : 0);
     }
 
     public void UpdateAllToggle()
@@ -147,6 +174,7 @@ public class FeedbackController : MonoBehaviour
                                        dieEffectToggle.isOn &&
                                        vibrationsEffectToggle.isOn &&
                                        cameraShakeEffectToggle.isOn);
+        SaveToggles();
     }
 
     public void OnEmitAll()
@@ -165,6 +193,7 @@ public class FeedbackController : MonoBehaviour
             dieEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
             vibrationsEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
             cameraShakeEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
+            SaveToggles();
         }
     }
 }

@@ -1,12 +1,16 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class ControlsMenu : MonoBehaviour
 {
     [SerializeField] private GameObject mainMenu;
+    [SerializeField] private GameObject settingsMenu;
     [SerializeField] private GameObject controlsMenu;
     [SerializeField] private GameObject controlsMenu2;
     [SerializeField] private GameObject mainFirstSelected;
+    [SerializeField] private GameObject settingsButton;
+    [SerializeField] private GameObject controlsButton;
     
     private InputSettings inputs;
     
@@ -23,13 +27,18 @@ public class ControlsMenu : MonoBehaviour
         inputs.Menus.Disable();
     }
 
+    private void Awake()
+    {
+        EventSystem.current.SetSelectedGameObject(mainFirstSelected);
+    }
+
     public void Controls()
     {
         if (controlsMenu.activeSelf)
         {
             mainMenu.SetActive(true);
             controlsMenu.SetActive(false);
-            EventSystem.current.SetSelectedGameObject(mainFirstSelected);
+            EventSystem.current.SetSelectedGameObject(controlsButton);
         }
         
         
@@ -37,7 +46,15 @@ public class ControlsMenu : MonoBehaviour
         {
             mainMenu.SetActive(true);
             controlsMenu2.SetActive(false);
-            EventSystem.current.SetSelectedGameObject(mainFirstSelected);
+            EventSystem.current.SetSelectedGameObject(controlsButton);
+        }
+        
+        
+        if (settingsMenu.activeSelf)
+        {
+            mainMenu.SetActive(true);
+            settingsMenu.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(settingsButton);
         }
     }
 }

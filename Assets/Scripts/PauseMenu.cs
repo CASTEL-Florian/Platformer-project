@@ -5,12 +5,14 @@ public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject settingsMenu;
+    [SerializeField] private GameObject controlMenu;
+    [SerializeField] private GameObject controlMenu2;
     [SerializeField] private GameObject pauseFirstSelected;
     [SerializeField] private GameObject settingsFirstSelected;
-    [SerializeField] private GameObject controlMenu;
     [SerializeField] private GameObject controlFirstSelected;
-    [SerializeField] private GameObject controlMenu2;
     [SerializeField] private GameObject control2FirstSelected;
+    [SerializeField] private GameObject settingsButton;
+    [SerializeField] private GameObject controlsButton;
 
 
     private InputSettings inputs;
@@ -33,20 +35,29 @@ public class PauseMenu : MonoBehaviour
         if (pauseMenu.activeSelf)
         {
             pauseMenu.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(pauseFirstSelected);
             Time.timeScale = 1;
         }
         else
         {
             if (settingsMenu.activeSelf)
+            {
                 settingsMenu.SetActive(false);
+                EventSystem.current.SetSelectedGameObject(settingsButton);
+            }
             else if (controlMenu.activeSelf)
+            {
                 controlMenu.SetActive(false);
+                EventSystem.current.SetSelectedGameObject(controlsButton);
+            }
             else if (controlMenu2.activeSelf)
+            {
                 controlMenu2.SetActive(false);
+                EventSystem.current.SetSelectedGameObject(controlsButton);
+            }
             else
                 Time.timeScale = 0;
             pauseMenu.SetActive(true);
-            EventSystem.current.SetSelectedGameObject(pauseFirstSelected);
         }
     }
 
@@ -70,21 +81,22 @@ public class PauseMenu : MonoBehaviour
         {
             settingsMenu.SetActive(false);
             pauseMenu.SetActive(true);
-            EventSystem.current.SetSelectedGameObject(pauseFirstSelected);
+            EventSystem.current.SetSelectedGameObject(settingsButton);
         } else if (controlMenu.activeSelf)
         {
             controlMenu.SetActive(false);
             pauseMenu.SetActive(true);
-            EventSystem.current.SetSelectedGameObject(pauseFirstSelected);
+            EventSystem.current.SetSelectedGameObject(controlsButton);
         } else if (controlMenu2.activeSelf)
         {
             controlMenu2.SetActive(false);
             pauseMenu.SetActive(true);
-            EventSystem.current.SetSelectedGameObject(pauseFirstSelected);
+            EventSystem.current.SetSelectedGameObject(controlsButton);
         }
         else if(pauseMenu.activeSelf)
         {
             pauseMenu.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(pauseFirstSelected);
             Time.timeScale = 1;
         }
     }
