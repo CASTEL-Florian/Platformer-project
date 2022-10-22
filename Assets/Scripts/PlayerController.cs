@@ -105,6 +105,7 @@ public class PlayerController : MonoBehaviour
     
     
     private float timeSinceLeftGround = 0;
+    private bool jumpWithCoyoteTime = false;
     private float slopeAngle = 0;
 
     private AudioSource audioSource;
@@ -156,8 +157,9 @@ public class PlayerController : MonoBehaviour
                     velocity.y = grounded ? jumpVelocity : airJumpVelocity;
                 }
 
-                if ((!grounded || Mathf.Abs(slopeAngle) > maxSlopeAngle) && !onWall && !isOnWallDelayActive() && FeedbackController.Instance.EmitDoubleJumpEffect)
+                if ((!grounded || Mathf.Abs(slopeAngle) > maxSlopeAngle) && !onWall && !isOnWallDelayActive() && !jumpWithCoyoteTime && FeedbackController.Instance.EmitDoubleJumpEffect)
                     Instantiate(doubleJumpParticles, groundCheck.transform.position, Quaternion.identity);
+                jumpWithCoyoteTime = false;
             }
             if (velocity.y > 0 && !jumpButtonHeld && jumpCancellable)
             {
@@ -334,6 +336,8 @@ public class PlayerController : MonoBehaviour
     {
         if ((grounded || onWall || (timeSinceLeftGround < coyoteTimeThreshold && velocity.y <= 0) || isOnWallDelayActive()) && Mathf.Abs(slopeAngle) < maxSlopeAngle)
         {
+            if (timeSinceLeftGround < coyoteTimeThreshold && velocity.y <= 0)
+                jumpWithCoyoteTime = true;
             jump = true;
             timeSinceLeftGround = coyoteTimeThreshold;
         }
