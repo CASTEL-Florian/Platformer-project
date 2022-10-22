@@ -11,7 +11,12 @@ public class ControlsMenu : MonoBehaviour
     [SerializeField] private GameObject mainFirstSelected;
     [SerializeField] private GameObject settingsButton;
     [SerializeField] private GameObject controlsButton;
-    
+
+    [SerializeField] private AudioClip buttonClickSound;
+    [SerializeField] private AudioClip buttonSelectound;
+
+    private AudioSource audioSource;
+
     private InputSettings inputs;
     
     private void OnEnable(){
@@ -30,6 +35,7 @@ public class ControlsMenu : MonoBehaviour
     private void Awake()
     {
         EventSystem.current.SetSelectedGameObject(mainFirstSelected);
+        audioSource = GetComponent<AudioSource>();
     }
 
     public void Controls()
@@ -56,5 +62,15 @@ public class ControlsMenu : MonoBehaviour
             settingsMenu.SetActive(false);
             EventSystem.current.SetSelectedGameObject(settingsButton);
         }
+    }
+
+    public void ButtonClick()
+    {
+        audioSource.PlayOneShot(buttonClickSound);
+    }
+
+    public void ButtonSelect()
+    {
+        audioSource.PlayOneShot(buttonSelectound);
     }
 }

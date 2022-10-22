@@ -65,6 +65,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private ParticleSystem wallSlideParticles;
     [SerializeField] private TrailRenderer dashTrail;
     [SerializeField] Animator animator;
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField] private AudioClip trampolineSound;
+    [SerializeField] private AudioClip landSound;
+    [SerializeField] private AudioClip dashSound;
 
     private Vector2 velocity = Vector2.zero;
     private Vector2 moveDirection;
@@ -102,9 +106,12 @@ public class PlayerController : MonoBehaviour
     
     private float timeSinceLeftGround = 0;
     private float slopeAngle = 0;
+
+    private AudioSource audioSource;
     private void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
+        audioSource = GetComponent<AudioSource>();
         currentAirJumpCount = airJumpCount;
     }
 
@@ -120,6 +127,7 @@ public class PlayerController : MonoBehaviour
             jumpCancellable = false;
         if (onTrampoline)
         {
+            audioSource.PlayOneShot(trampolineSound);
             velocity.y = trampolineBounceVelocity;
             hasBounced = true;
             dashStopTime = 0;
@@ -130,6 +138,7 @@ public class PlayerController : MonoBehaviour
         {
             if (jump)
             {
+                audioSource.PlayOneShot(jumpSound);
                 if (FeedbackController.Instance.DeformPlayerEffect)
                     animator.SetTrigger("jump");
                 if (grounded || !fixedAirJumpHeight)
@@ -385,7 +394,10 @@ public class PlayerController : MonoBehaviour
                     velocity.y = 0;
                 }
                 if (!wasGroundedLastFrame && Mathf.Abs(slopeAngle) < maxSlopeAngle && grounded && FeedbackController.Instance.DeformPlayerEffect)
+                {
                     animator.SetTrigger("land");
+                    audioSource.PlayOneShot(landSound);
+                }
             }
         }
         wasGroundedLastFrame = grounded;
@@ -407,6 +419,7 @@ public class PlayerController : MonoBehaviour
 
         if (allowDash && CanDash() && dash && dir.x != 0)
         {
+            audioSource.PlayOneShot(dashSound);
             dashDirection = dir.x > 0 ? 1 : -1;
             dashStopTime = Time.time + dashDuration;
             dashCooldownStopTime = Time.time + dashCooldown;

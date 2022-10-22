@@ -14,9 +14,17 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private GameObject settingsButton;
     [SerializeField] private GameObject controlsButton;
 
+    [SerializeField] private AudioClip buttonClickSound;
+    [SerializeField] private AudioClip buttonSelectound;
 
+    private AudioSource audioSource;
     private InputSettings inputs;
-    
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     private void OnEnable(){
         inputs = new InputSettings();
         inputs.Menus.Enable();
@@ -115,5 +123,15 @@ public class PauseMenu : MonoBehaviour
             controlMenu2.SetActive(false);
             EventSystem.current.SetSelectedGameObject(controlFirstSelected);
         }
+    }
+
+    public void ButtonClick()
+    {
+        audioSource.PlayOneShot(buttonClickSound);
+    }
+
+    public void ButtonSelect()
+    {
+        audioSource.PlayOneShot(buttonSelectound);
     }
 }
