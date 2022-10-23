@@ -45,10 +45,14 @@ public class UnitHealth : MonoBehaviour
                 Instantiate(deathParticles, transform.position, transform.rotation);
             GamepadVibrations.Instance.OnDie();
             deathEvent.Invoke();
-            playerAudioSource.PlayOneShot(deathSound);
+            if (FeedbackController.Instance.SoundEffects)
+                playerAudioSource.PlayOneShot(deathSound);
         }
         else
-            playerAudioSource.PlayOneShot(hitSound);
+        {
+            if (FeedbackController.Instance.SoundEffects)
+                playerAudioSource.PlayOneShot(hitSound);
+        }
     }
 
 

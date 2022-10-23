@@ -21,6 +21,7 @@ public class FeedbackController : MonoBehaviour
     [SerializeField] private Toggle dieEffectToggle;
     [SerializeField] private Toggle vibrationsEffectToggle;
     [SerializeField] private Toggle cameraShakeEffectToggle;
+    [SerializeField] private Toggle soundEffectsToggle;
 
     [field: Header("Pre-selected")]
     [field: Space]
@@ -36,6 +37,7 @@ public class FeedbackController : MonoBehaviour
     [SerializeField] private bool dieEffect = true;
     [SerializeField] private bool vibrationsEffect = true;
     [SerializeField] private bool cameraShakeEffect = true;
+    [SerializeField] private bool soundEffects = true;
 
     public bool EmitRunEffect
     {
@@ -105,6 +107,11 @@ public class FeedbackController : MonoBehaviour
         private set { }
     }
 
+    public bool SoundEffects
+    {
+        get => soundEffectsToggle.isOn;
+        private set { }
+    }
     public static FeedbackController Instance;
     private bool allowEmitAll = false;
 
@@ -129,6 +136,7 @@ public class FeedbackController : MonoBehaviour
         dieEffectToggle.SetIsOnWithoutNotify(GetPref("dieEffectToggle", dieEffect));
         vibrationsEffectToggle.SetIsOnWithoutNotify(GetPref("vibrationsEffectToggle", vibrationsEffect));
         cameraShakeEffectToggle.SetIsOnWithoutNotify(GetPref("cameraShakeEffectToggle", cameraShakeEffect));
+        soundEffectsToggle.SetIsOnWithoutNotify(GetPref("soundEffectsToggle", soundEffects));
         UpdateAllToggle();
         allowEmitAll = true;
     }
@@ -147,6 +155,7 @@ public class FeedbackController : MonoBehaviour
         SetPref("dieEffectToggle", dieEffectToggle.isOn);
         SetPref("vibrationsEffectToggle", vibrationsEffectToggle.isOn);
         SetPref("cameraShakeEffectToggle", cameraShakeEffectToggle.isOn);
+        SetPref("soundEffectsToggle", soundEffectsToggle.isOn);
         PlayerPrefs.Save();
     }
 
@@ -173,7 +182,9 @@ public class FeedbackController : MonoBehaviour
                                        hitEffectToggle.isOn &&
                                        dieEffectToggle.isOn &&
                                        vibrationsEffectToggle.isOn &&
-                                       cameraShakeEffectToggle.isOn);
+                                       cameraShakeEffectToggle.isOn &&
+                                       soundEffectsToggle.isOn
+                                       );
         SaveToggles();
     }
 
@@ -193,6 +204,7 @@ public class FeedbackController : MonoBehaviour
             dieEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
             vibrationsEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
             cameraShakeEffectToggle.SetIsOnWithoutNotify(allToggle.isOn);
+            soundEffectsToggle.SetIsOnWithoutNotify(allToggle.isOn);
             SaveToggles();
         }
     }

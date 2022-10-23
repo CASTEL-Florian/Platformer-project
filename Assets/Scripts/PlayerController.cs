@@ -128,7 +128,8 @@ public class PlayerController : MonoBehaviour
             jumpCancellable = false;
         if (onTrampoline)
         {
-            audioSource.PlayOneShot(trampolineSound);
+            if (FeedbackController.Instance.SoundEffects)
+                audioSource.PlayOneShot(trampolineSound);
             velocity.y = trampolineBounceVelocity;
             hasBounced = true;
             dashStopTime = 0;
@@ -139,7 +140,8 @@ public class PlayerController : MonoBehaviour
         {
             if (jump)
             {
-                audioSource.PlayOneShot(jumpSound);
+                if (FeedbackController.Instance.SoundEffects)
+                    audioSource.PlayOneShot(jumpSound);
                 if (FeedbackController.Instance.DeformPlayerEffect)
                     animator.SetTrigger("jump");
                 if (grounded || !fixedAirJumpHeight)
@@ -401,7 +403,8 @@ public class PlayerController : MonoBehaviour
                 if (!wasGroundedLastFrame && Mathf.Abs(slopeAngle) < maxSlopeAngle && grounded && FeedbackController.Instance.DeformPlayerEffect)
                 {
                     animator.SetTrigger("land");
-                    audioSource.PlayOneShot(landSound);
+                    if (FeedbackController.Instance.SoundEffects)
+                        audioSource.PlayOneShot(landSound);
                 }
             }
         }
@@ -424,7 +427,8 @@ public class PlayerController : MonoBehaviour
 
         if (allowDash && CanDash() && dash && dir.x != 0)
         {
-            audioSource.PlayOneShot(dashSound);
+            if (FeedbackController.Instance.SoundEffects)
+                audioSource.PlayOneShot(dashSound);
             dashDirection = dir.x > 0 ? 1 : -1;
             dashStopTime = Time.time + dashDuration;
             dashCooldownStopTime = Time.time + dashCooldown;

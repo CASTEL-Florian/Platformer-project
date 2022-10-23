@@ -66,11 +66,13 @@ public class ControlsMenu : MonoBehaviour
 
     public void ButtonClick()
     {
-        audioSource.PlayOneShot(buttonClickSound);
+        if (FeedbackController.Instance.SoundEffects)
+            audioSource.PlayOneShot(buttonClickSound);
     }
 
     public void ButtonSelect()
     {
-        audioSource.PlayOneShot(buttonSelectound);
+        if (FeedbackController.Instance.SoundEffects)
+            audioSource.PlayOneShot(buttonSelectound);
     }
 }
