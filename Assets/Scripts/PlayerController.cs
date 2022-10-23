@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool airSprintControl = true;
     [SerializeField] private bool fixedAirJumpHeight = true;
     [SerializeField] private float coyoteTimeThreshold = 0.1f;
+    [SerializeField] private bool wallsRefreshWallJump = false;
     
     [Header("Collisions verticales et horizontales")]
     [Space]
@@ -162,6 +163,7 @@ public class PlayerController : MonoBehaviour
                 if ((!grounded || Mathf.Abs(slopeAngle) > maxSlopeAngle) && !onWall && !isOnWallDelayActive() && !jumpWithCoyoteTime && FeedbackController.Instance.EmitDoubleJumpEffect)
                     Instantiate(doubleJumpParticles, groundCheck.transform.position, Quaternion.identity);
                 jumpWithCoyoteTime = false;
+                onWallDelayStopTime = Time.time;
             }
             if (velocity.y > 0 && !jumpButtonHeld && jumpCancellable)
             {
@@ -317,7 +319,7 @@ public class PlayerController : MonoBehaviour
     private void WallCheck()
     {
         onWall = false;
-        if (moveDirection.x == 0)
+        if (moveDirection.x == 0 || moveDirection.x * velocity.x < 0)
             return;
 
         Collider2D[] colliders = Physics2D.OverlapBoxAll(wallCheck.transform.position, wallCheck.size, 0, whatIsWall);
@@ -333,6 +335,8 @@ public class PlayerController : MonoBehaviour
                     jump = true;
             }
         }
+        if (wallsRefreshWallJump && onWall)
+            currentAirJumpCount = 0;
     }
 
     private void Jump()
