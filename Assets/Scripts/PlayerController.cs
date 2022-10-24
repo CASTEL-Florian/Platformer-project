@@ -219,7 +219,8 @@ public class PlayerController : MonoBehaviour
             runParticles.Stop();
 
         WallCheck();
-        velocity.y -= gravity * Time.fixedDeltaTime;
+        if (!grounded || moveDirection.y < platformGoDownDirectionThreshold)
+            velocity.y -= gravity * Time.fixedDeltaTime;
 
         if (onWall && !IsDashing() && !grounded)
         {
