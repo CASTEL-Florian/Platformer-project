@@ -744,7 +744,7 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
                 },
                 {
                     ""devicePath"": ""<WebGLGamepad>"",
-                    ""isOptional"": true,
+                    ""isOptional"": false,
                     ""isOR"": false
                 }
             ]
@@ -760,7 +760,7 @@ public partial class @InputSettings : IInputActionCollection2, IDisposable
                 },
                 {
                     ""devicePath"": ""<Mouse>"",
-                    ""isOptional"": true,
+                    ""isOptional"": false,
                     ""isOR"": false
                 }
             ]
