@@ -220,12 +220,13 @@ MonoBehaviour:
   sprintMaxVelocityX: 8
   sprintAcceleration: 15
   allowTurnBoost: 1
-  turnBoostFactor: 6
+  turnBoostFactor: 4
   turnBoostDuration: 0.5
   allowDash: 1
   dashSpeed: 30
   dashDuration: 0.3
   dashCooldown: 1
+  canDashWithoutDirection: 1
   speedOnSlope:
     serializedVersion: 2
     m_Curve:
@@ -252,18 +253,19 @@ MonoBehaviour:
     m_RotationOrder: 4
   gravity: 20
   airJumpCount: 1
-  maxVelocityY: 10
+  maxVelocityY: 20
   jumpVelocity: 10
   airJumpVelocity: 8
-  wallJumpVelocity: {x: 5, y: 10}
-  wallJumpDuration: 0
-  onWallDelay: 0
+  wallJumpVelocity: {x: 20, y: 11}
+  wallJumpDuration: 1
+  onWallDelay: 0.3
   jumpReleaseMultiplier: 2
   bufferJumpMaxAllowedTime: 0.2
   airControl: 1
-  airSprintControl: 1
+  airSprintControl: 0
   fixedAirJumpHeight: 1
   coyoteTimeThreshold: 0.1
+  wallsRefreshWallJump: 0
   groundCheck: {fileID: 1259584269019671013}
   whatIsGround:
     serializedVersion: 2
@@ -275,14 +277,14 @@ MonoBehaviour:
   maxFallingSpeedOnWalls: 2
   maxSlopeAngle: 45
   platformGoDownDirectionThreshold: -0.5
-  platformGoDownMinimumPressTime: 0.2
+  platformGoDownMinimumPressTime: 0.01
   groundAccelerationScale: 1
   groundDecelerationScale: 1
-  iceAccelerationScale: 0.5
-  iceDecelerationScale: 0.5
+  iceAccelerationScale: 0.3
+  iceDecelerationScale: 0.2
   airAccelerationScale: 0.5
   airDecelerationScale: 0.5
-  trampolineBounceVelocity: 15
+  trampolineBounceVelocity: 20
   doubleJumpParticles: {fileID: 5025589194357872104, guid: fd99cea1e9291574caca8945a140c6a3, type: 3}
   runParticles: {fileID: 4304402885649461124}
   wallSlideParticles: {fileID: 8014108323006871484}
@@ -338,6 +340,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.Renderer, UnityEngine
         m_MethodName: set_enabled
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: GameplayManager, Assembly-CSharp
+        m_MethodName: GameOver
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -564,7 +578,7 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 1, g: 0.63529414, b: 0, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 0.39215687}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
