@@ -205,7 +205,7 @@ public class PlayerController : MonoBehaviour
         if ((airControl || grounded) && !IsWallJumpActive())
             velocity.x += moveDirection.x * accelerationSpeed * Time.fixedDeltaTime;
 
-        if (IsTurnBoostActive())
+        if (IsTurnBoostActive() && (airControl || grounded))
             velocity.x += moveDirection.x * Mathf.Abs(velocity.x) * turnBoostFactor * Time.fixedDeltaTime;
 
         if (!IsDashing() && velocity.x != 0 && (grounded || !FeedbackController.Instance.EmitRunEffectOnGroundOnly) &&
@@ -234,7 +234,7 @@ public class PlayerController : MonoBehaviour
             velocity.y = Mathf.Clamp(velocity.y, -maxVelocityY, hasBounced ? velocity.y : maxVelocityY);
         }
 
-        if (moveDirection.x == 0)
+        if (moveDirection.x == 0 || (!grounded && !airControl))
         {
             if (Mathf.Abs(velocity.x) < decelerationSpeed * Time.fixedDeltaTime)
                 velocity.x = 0;
