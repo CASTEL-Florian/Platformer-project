@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashSpeed;
     [SerializeField] private float dashDuration;
     [SerializeField] private float dashCooldown;
+    [SerializeField] private bool canDashWithoutDirection = true;
     [SerializeField] private AnimationCurve speedOnSlope;
     
     [Header("Saut")]
@@ -429,11 +430,14 @@ public class PlayerController : MonoBehaviour
         moveDirection = dir;
         sprinting = sprint && (sprinting || airSprintControl || (!airSprintControl && grounded));
 
-        if (allowDash && CanDash() && dash && dir.x != 0)
+        if (allowDash && CanDash() && dash && (dir.x != 0 || canDashWithoutDirection))
         {
             if (FeedbackController.Instance.SoundEffects)
                 audioSource.PlayOneShot(dashSound);
-            dashDirection = dir.x > 0 ? 1 : -1;
+            if (dir.x != 0)
+                dashDirection = dir.x > 0 ? 1 : -1;
+            else
+                dashDirection = Mathf.Sign(transform.localScale.x);
             dashStopTime = Time.time + dashDuration;
             dashCooldownStopTime = Time.time + dashCooldown;
         }
